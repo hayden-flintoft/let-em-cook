@@ -8,6 +8,7 @@ export const up = function (knex) {
     table.integer('user_id')
     table.integer('mealdb_id')
     table.string('comment')
+    table.string('author')
   })
 }
 
