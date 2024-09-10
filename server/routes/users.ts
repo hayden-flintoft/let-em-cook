@@ -86,4 +86,16 @@ router.patch('/user/:id', async (req, res) => {
   }
 })
 
+// Delete 'api/v1/users/:id
+router.delete('/:id', async (req, res) => {
+  const id = Number(req.params.id)
+  try {
+    await db.deleteUser(id)
+    res.sendStatus(204)
+  } catch (error) {
+    console.error(`Database error: ${error}`)
+    res.sendStatus(500)
+  }
+})
+
 export default router

@@ -1,4 +1,4 @@
-import connection from '../connections'
+import connection from '../connection'
 import { User } from '../../../models/users'
 
 const db = connection
@@ -77,4 +77,9 @@ export function updateUser(
   },
 ) {
   return db('users').where({ id }).update(updates)
+}
+
+// delete a user
+export function deleteUser(id: number) {
+  return db('users').where({ id }).del()
 }
