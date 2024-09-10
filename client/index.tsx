@@ -2,11 +2,10 @@ import { createRoot } from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { ClerkProvider } from '@clerk/clerk-react'
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import routes from './routes'
+import { RouterProvider } from 'react-router-dom'
+import router from './routes'
 
 const queryClient = new QueryClient()
-const router = createBrowserRouter(routes)
 
 // Import your publishable key
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
