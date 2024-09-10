@@ -1,6 +1,8 @@
-import request from 'superagent'
+// import request from 'superagent'
 
-export async function getGreeting(): Promise<string> {
-  const res = await request.get('/api/v1/greeting')
-  return res.body.greeting
-}
+// const api = MEALDB_API_KEY
+
+// export async function getRecipe(): Promise<string> {
+//   const res = await request.get('www.themealdb.com/api/json/v1/1/filter.php?c=Seafood')
+//   return res.body
+// }
