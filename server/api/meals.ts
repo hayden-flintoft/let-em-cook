@@ -46,4 +46,25 @@ router.get('/:id', async (req, res) => {
   }
 })
 
+// Get /api/meals/:i - Get a meal by muliple ingredients search
+router.get('/ingredients/:q', async (req, res) => {
+  try {
+    const response = await request.get(
+      `https://www.themealdb.com/api/json/v2/${process.env.MEALDB_API_KEY}/filter.php?i=${req.params.q}`,
+    )
+
+    if (!response.body || !response.body.meals) {
+      throw new Error('Invalid API response')
+    }
+
+    res.json(response.body.meals)
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).send((error as Error).message)
+    } else {
+      res.status(500).send('Something went wrong')
+    }
+  }
+})
+
 export default router
