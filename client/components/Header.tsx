@@ -14,7 +14,7 @@ export default function Header() {
   }
 
   return (
-    <header className="mx-[10px] mt-[10px] w-[calc(100%-20px)] rounded-3xl border-2 border-[#9E3700] bg-white p-4 text-[#9E3700]">
+    <header className="mx-[10px] mt-[10px] w-[calc(100%-20px)] rounded-3xl bg-white p-4 text-[#9E3700]">
       <div className="container mx-auto flex h-full items-center justify-between">
         {/* Logo */}
         <Link to="/">
@@ -29,21 +29,21 @@ export default function Header() {
         <nav className="space-x-4">
           <Link
             to="/"
-            className="scroll-m-20 border-b border-transparent pb-2 text-3xl font-semibold tracking-tight first:mt-0 hover:border-[#9E3700]"
+            className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]"
           >
             Home
           </Link>
           <Link
             to="/meal"
-            className="scroll-m-20 border-b border-transparent pb-2 text-3xl font-semibold tracking-tight first:mt-0 hover:border-[#9E3700]"
+            className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]"
           >
             Meal
           </Link>
           <Link
-            to="/about"
-            className="scroll-m-20 border-b border-transparent pb-2 text-3xl font-semibold tracking-tight first:mt-0 hover:border-[#9E3700]"
+            to="/recipe"
+            className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]"
           >
-            Ingredient
+            Recipe
           </Link>
         </nav>
 

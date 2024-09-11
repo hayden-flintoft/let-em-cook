@@ -1,9 +1,9 @@
-
+// import { getMealById } from '@/api/meal'
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
+  // CardDescription,
+  // CardFooter,
   CardHeader,
 } from '@/components/ui/MealCard'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -56,7 +56,7 @@ const meals = {
 export default function CardWithForm() {
   return (
     <div className="flex min-h-screen items-center justify-center">
-      <Card className="w-[60%] max-w-[1000px] p-4 shadow-lg">
+      <Card className="shadow-neumorph hover:shadow-neumorph-pressed active:shadow-neumorph-pressed w-[60%] max-w-[1000px] p-4 shadow-lg">
         <CardHeader>
           <p className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]">
             {meals.strMeal}
@@ -71,9 +71,18 @@ export default function CardWithForm() {
                   alt="food"
                   className="mx-auto w-[60%] object-cover"
                 />
-                <p className="scroll-m-20 text-xl font-extrabold tracking-tight text-[#9E3700]">
+                <br></br>
+                <p className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]">
+                  Step by step!
+                </p>
+                <br></br>
+                <p className="text-l scroll-m-20 font-extrabold tracking-tight text-[#9E3700]">
                   {' '}
-                  {meals.strArea}
+                  {meals.strInstructions}
+                </p>
+                <br></br>
+                <p className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]">
+                  Ingredients!
                 </p>
                 <div className="container mx-auto p-4">
                   {/* Map over ingredients */}
@@ -86,6 +95,21 @@ export default function CardWithForm() {
                       </p>
                     </div>
                   ))}
+                </div>
+                <p className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]">
+                  Watch how to make it
+                </p>
+                <br></br>
+                <div className="flex justify-center">
+                  <iframe
+                    width="560"
+                    height="315"
+                    src={`https://www.youtube.com/embed/${meals.strYoutube.split('=')[1]}`}
+                    title="YouTube video player"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-[60%] rounded-lg"
+                  ></iframe>
                 </div>
               </div>
             </div>

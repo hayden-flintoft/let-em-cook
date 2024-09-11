@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@layer utilities {
+  .shadow-neumorph {
+    box-shadow:
+      8px 8px 15px rgba(0, 0, 0, 0.15),
+      -8px -8px 15px rgba(255, 255, 255, 0.7);
+  }
+  .shadow-neumorph-pressed {
+    box-shadow:
+      inset 8px 8px 15px rgba(0, 0, 0, 0.15),
+      inset -8px -8px 15px rgba(255, 255, 255, 0.7);
+  }
+}
