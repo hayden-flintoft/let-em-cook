@@ -43,13 +43,7 @@ export default function Header() {
             to="/about"
             className="scroll-m-20 border-b border-transparent pb-2 text-3xl font-semibold tracking-tight first:mt-0 hover:border-[#9E3700]"
           >
-            About
-          </Link>
-          <Link
-            to="/contact"
-            className="scroll-m-20 border-b border-transparent pb-2 text-3xl font-semibold tracking-tight first:mt-0 hover:border-[#9E3700]"
-          >
-            Contact
+            Ingredient
           </Link>
         </nav>
 
