@@ -51,14 +51,14 @@ router.get('/user/:email', async (req, res) => {
 
 // Post '/api/vi/users'
 router.post('/user/', async (req, res) => {
-  const { username, firstName, lastName, email, authToken } = req.body
+  const { username, first_name, last_name, email, auth_token } = req.body
   try {
     const user = await db.createUser({
       username,
-      firstName,
-      lastName,
+      first_name,
+      last_name,
       email,
-      authToken,
+      auth_token,
     })
     res.json(user)
   } catch (error) {
@@ -70,16 +70,28 @@ router.post('/user/', async (req, res) => {
 // Patch '/api/vi/users/:id'
 router.patch('/user/:id', async (req, res) => {
   const id = Number(req.params.id)
-  const { username, firstName, lastName, email, authToken } = req.body
+  const { username, first_name, last_name, email, auth_token } = req.body
   try {
     const user = await db.updateUser(id, {
       username,
-      firstName,
-      lastName,
+      first_name,
+      last_name,
       email,
-      authToken,
+      auth_token,
     })
     res.json(user)
+  } catch (error) {
+    console.error(`Database error: ${error}`)
+    res.sendStatus(500)
+  }
+})
+
+// Delete 'api/v1/users/:id
+router.delete('/:id', async (req, res) => {
+  const id = Number(req.params.id)
+  try {
+    await db.deleteUser(id)
+    res.sendStatus(204)
   } catch (error) {
     console.error(`Database error: ${error}`)
     res.sendStatus(500)

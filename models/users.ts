@@ -5,8 +5,8 @@ export interface Users {
 export interface User {
   id?: number
   username: string
-  firstName: string
-  lastName: string
+  first_name: string
+  last_name: string
   email: string
-  authToken: string
+  auth_token: string
 }
