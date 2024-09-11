@@ -20,18 +20,8 @@ export default function Home() {
 
   return (
     <div>
-      {/* <div className="relative w-full">
-        <div className="h-[1000px] w-full overflow-hidden rounded-3xl">
-          <img
-            src="/images/Meals-by-Chefkraft.png"
-            alt="Food"
-            className="h-auto w-full"
-          />
-        </div>
-      </div> */}
-      {/* Main Image */}
       <div>
-        <div className="relative mb-8 h-[500px] w-full overflow-hidden rounded-3xl">
+        <div className="shadow-neumorph hover:shadow-neumorph-pressed active:shadow-neumorph-pressed relative mb-8 h-[500px] w-full overflow-hidden rounded-3xl">
           <img
             src="/images/Meals-by-Chefkraft.png"
             alt="Various delicious meals"
