@@ -1,5 +1,6 @@
 import connection from '../connection'
 import { User } from '../../../models/users'
+import { P } from 'vitest/dist/reporters-yx5ZTtEV.js'
 
 const db = connection
 
@@ -70,16 +71,27 @@ export function updateUser(
   id: number,
   updates: {
     username?: string
-    firstName?: string
-    lastName?: string
+    first_name?: string
+    last_name?: string
     email?: string
-    authToken?: string
+    auth_token?: string
   },
-) {
-  return db('users').where({ id }).update(updates)
+): Promise<User> {
+  return db('users')
+    .where({ id })
+    .update(updates)
+    .returning([
+      'id',
+      'username',
+      'first_name',
+      'last_name',
+      'email',
+      'auth_token',
+    ])
+    .then((rows) => rows[0]) // Return the updated user
 }
 
 // delete a user
-export function deleteUser(id: number) {
+export function deleteUser(id: number): Promise<number> {
   return db('users').where({ id }).del()
 }

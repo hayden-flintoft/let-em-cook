@@ -7,7 +7,10 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': 'http://localhost:3000',
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
     },
   },
 
@@ -15,7 +18,7 @@ export default defineConfig({
   //See https://ui.shadcn.com/docs/installation/vite
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./client"),
+      '@': path.resolve(__dirname, './client'),
     },
   },
 })
