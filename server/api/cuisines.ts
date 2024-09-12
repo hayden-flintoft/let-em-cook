@@ -4,7 +4,7 @@ import 'dotenv/config' // Import the enviroment variables using dotenv.
 
 const router = express.Router()
 
-// GET /api/areas - Get all areas
+// GET /api/areas - Get all areas (referred to as cuisines)
 router.get('/', async (req, res) => {
   try {
     const response = await request.get(
@@ -15,12 +15,12 @@ router.get('/', async (req, res) => {
       throw new Error('Invalid API response')
     }
 
-    // Extracting the meals[] array from the response and sending it as areas[]
-    const areas = response.body.meals.map(
+    // Extracting areas[] and referring to them as cuisines[]
+    const cuisines = response.body.meals.map(
       (meal: { strArea: string }) => meal.strArea,
     )
 
-    res.json(areas)
+    res.json(cuisines)
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).send((error as Error).message)

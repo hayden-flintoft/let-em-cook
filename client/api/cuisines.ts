@@ -1,9 +1,9 @@
 import request from 'superagent'
-import { Areas } from '../../models/areas'
+import { Cuisine } from '../../models/cuisines'
 
 const serverURL = '/api/v1'
 
-export async function getCategories(): Promise<Areas> {
+export async function getCuisines(): Promise<Cuisine> {
   const response = await request.get(`${serverURL}/areas`)
   return response.body
 }
