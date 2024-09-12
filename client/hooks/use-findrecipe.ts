@@ -1,13 +1,9 @@
-// import SearchPage from '@/components/SearchPage'
-// import { useQueryClient, useMutation } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
+import { getIngredients } from '@/api/ingredients'
 
-// export default function useAddPet() {
-//   const queryClient = useQueryClient()
-
-//   return useMutation({
-//     mutationFn: (data: PetData) => SearchPage(data),
-//     onSuccess: async () => {
-//       queryClient.invalidateQueries({ queryKey: ['cook'] })
-//     },
-//   })
-// }
+export default function useIngredients() {
+  return useQuery({
+    queryKey: ['ingredients'],
+    queryFn: () => getIngredients(),
+  })
+}
