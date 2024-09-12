@@ -6,7 +6,7 @@ import * as URL from 'node:url'
 import meals from './api/meals.ts'
 import categories from './api/categories.ts'
 import ingredients from './api/ingredients.ts'
-import areas from './api/areas.ts'
+import areas from './api/cuisines.ts'
 
 const __filename = URL.fileURLToPath(import.meta.url)
 const __dirname = Path.dirname(__filename)
