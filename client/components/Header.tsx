@@ -37,13 +37,13 @@ export default function Header() {
             to="/meal"
             className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]"
           >
-            Meal
+            Recipe
           </Link>
           <Link
-            to="/recipe"
+            to="/searchpage"
             className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]"
           >
-            Recipe
+            Search
           </Link>
         </nav>
 

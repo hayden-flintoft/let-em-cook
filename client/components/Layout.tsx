@@ -1,4 +1,4 @@
-import { CollapsibleDemo } from './Collapsible.tsx'
+// import { CollapsibleDemo } from './Collapsible.tsx'
 import Header from './Header.tsx'
 import { Outlet } from 'react-router-dom'
 // import SidebarLayout from './Sidebar.tsx'
@@ -11,7 +11,7 @@ export default function Layout() {
         {/* <SidebarLayout> */}
         <Outlet />
         {/* </SidebarLayout> */}
-        <CollapsibleDemo />
+        {/* <CollapsibleDemo /> */}
       </main>
       <footer className="bg-gray-800 p-4 text-center text-white">
         © 2024 Letemcook. All rights reserved.
