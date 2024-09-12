@@ -34,12 +34,6 @@ export default function Header() {
             Home
           </Link>
           <Link
-            to="/recipe/:id"
-            className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]"
-          >
-            Recipe
-          </Link>
-          <Link
             to="/search"
             className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]"
           >
