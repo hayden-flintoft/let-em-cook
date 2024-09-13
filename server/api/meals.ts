@@ -46,7 +46,7 @@ router.get('/:id', async (req, res) => {
   }
 })
 
-// Get /api/meals/:i - Get a meal by muliple ingredients search
+// Get /api/meals/:i - Get a meal by multiple ingredients search
 router.get('/ingredients/:q', async (req, res) => {
   try {
     const response = await request.get(
@@ -57,7 +57,19 @@ router.get('/ingredients/:q', async (req, res) => {
       throw new Error('Invalid API response')
     }
 
-    res.json(response.body.meals)
+    // Fetch meal details in parallel
+    const mealDetailsPromises = response.body.meals.map((meal) =>
+      request.get(
+        `https://www.themealdb.com/api/json/v2/${process.env.MEALDB_API_KEY}/lookup.php?i=${meal.idMeal}`,
+      ),
+    )
+
+    const mealDetailsResponses = await Promise.all(mealDetailsPromises)
+    response.body.meals = mealDetailsResponses.map((res) => res.body.meals[0])
+
+    console.log(response.body.meals)
+
+    res.json(response.body.meals) // Return detailed meals
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).send((error as Error).message)

@@ -1,17 +1,29 @@
-// import { CollapsibleDemo } from './Collapsible.tsx'
-import Header from './Header.tsx'
+import { useState } from 'react'
+import Header from './Header'
 import { Outlet } from 'react-router-dom'
-// import SidebarLayout from './Sidebar.tsx'
 
 export default function Layout() {
+  // Define state variables
+  const [selectedIngredients, setSelectedIngredients] = useState<string[]>([])
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [selectedCuisines, setSelectedCuisines] = useState<string[]>([])
+
+  // Create a context value object
+  const contextValue = {
+    selectedIngredients,
+    setSelectedIngredients,
+    selectedCategories,
+    setSelectedCategories,
+    selectedCuisines,
+    setSelectedCuisines,
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="container mx-auto flex-grow p-4">
-        {/* <SidebarLayout> */}
-        <Outlet />
-        {/* </SidebarLayout> */}
-        {/* <CollapsibleDemo /> */}
+        {/* Pass the contextValue via the Outlet */}
+        <Outlet context={contextValue} />
       </main>
       <footer className="bg-gray-800 p-4 text-center text-white">
         © 2024 Letemcook. All rights reserved.
