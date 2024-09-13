@@ -1,9 +1,9 @@
 import request from 'superagent'
-import { Ingredients } from '../../models/ingredients'
+import { Ingredient } from '../../models/ingredients'
 
 const serverURL = '/api/v1'
 
-export async function getIngredients(): Promise<Ingredients> {
+export async function getIngredients(): Promise<Ingredient[]> {
   const response = await request.get(`${serverURL}/ingredients`)
   return response.body
 }

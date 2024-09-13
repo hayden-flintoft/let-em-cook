@@ -1,23 +1,49 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import {
-  Select,
-  SelectContent,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import useIngredients from '@/hooks/use-findrecipe'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useOutletContext } from 'react-router-dom'
+// import { getMealByIngredients } from '@/api/meal'
+
+interface Ingredient {
+  idIngredient: string
+  strIngredient: string
+}
+
+interface Recipe {
+  idMeal: string
+  strMeal: string
+  strMealThumb: string
+}
+
+interface OutletContextType {
+  selectedIngredients: string[]
+  setSelectedIngredients: React.Dispatch<React.SetStateAction<string[]>>
+  selectedCategories: string[]
+  setSelectedCategories: React.Dispatch<React.SetStateAction<string[]>>
+  selectedCuisines: string[]
+  setSelectedCuisines: React.Dispatch<React.SetStateAction<string[]>>
+}
 
 export default function SearchPage() {
   const { data: ingredients, isLoading, error } = useIngredients()
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedIngredients, setSelectedIngredients] = useState<string[]>([])
-  const [recipes, setRecipes] = useState<any[]>([])
+  const [recipes, setRecipes] = useState<Recipe[]>([])
   const [isFetchingRecipes, setIsFetchingRecipes] = useState(false)
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
   const navigate = useNavigate()
+
+  const {
+    selectedIngredients,
+    setSelectedIngredients,
+    selectedCategories,
+    setSelectedCategories,
+    selectedCuisines,
+    setSelectedCuisines,
+  } = useOutletContext<OutletContextType>()
+
+  const categories = ['Vegetarian', 'Vegan', 'Dessert', 'Breakfast']
+  const cuisines = ['Italian', 'Chinese', 'Mexican', 'Indian']
 
   const observer = useRef<IntersectionObserver | null>(null)
   const lastRecipeElementRef = useCallback(
@@ -42,53 +68,70 @@ export default function SearchPage() {
     )
   }
 
-  const handleSubmit = async () => {
-    console.log('Selected Ingredients:', selectedIngredients)
-    setRecipes([])
-    setPage(1)
-    setHasMore(true)
-    await fetchRecipes(selectedIngredients, 1)
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategories((prev) =>
+      prev.includes(category)
+        ? prev.filter((item) => item !== category)
+        : [...prev, category],
+    )
   }
 
-  const fetchRecipes = async (ingredients: string[], pageNum: number) => {
-    if (ingredients.length === 0) return
+  const handleCuisineChange = (cuisine: string) => {
+    setSelectedCuisines((prev) =>
+      prev.includes(cuisine)
+        ? prev.filter((item) => item !== cuisine)
+        : [...prev, cuisine],
+    )
+  }
 
-    setIsFetchingRecipes(true)
-    try {
-      const query = ingredients.join(',')
-      const url = `https://www.themealdb.com/api/json/v1/1/filter.php?i=${query}`
+  const fetchRecipes = useCallback(
+    async (ingredients: string[], pageNum: number) => {
+      console.log('Fetching recipes:', ingredients, pageNum) // Log ingredients and page number
+      if (ingredients.length === 0) return
 
-      const response = await fetch(url)
-      if (!response.ok) {
-        throw new Error('Failed to fetch recipes')
+      setIsFetchingRecipes(true)
+      try {
+        const query = ingredients.join(',')
+        const url = `/api/v1/meals/ingredients/${query}`
+
+        console.log('Fetching recipes from URL:', url) // Log the request URL
+
+        const response = await fetch(url)
+        if (!response.ok) {
+          throw new Error('Failed to fetch recipes')
+        }
+
+        const data = await response.json()
+        console.log('Fetched Recipes from API:', data) // Log the fetched data
+
+        const newRecipes = data || [] // Ensure data is an array
+        const startIndex = (pageNum - 1) * 10
+        const endIndex = startIndex + 10
+        const paginatedRecipes = newRecipes.slice(startIndex, endIndex)
+
+        setRecipes((prevRecipes) => [...paginatedRecipes])
+        setHasMore(endIndex < newRecipes.length)
+      } catch (error) {
+        console.error('Error fetching recipes:', error) // Log error details
+      } finally {
+        setIsFetchingRecipes(false)
       }
-
-      const data = await response.json()
-      const newRecipes = data.meals || []
-      const startIndex = (pageNum - 1) * 10
-      const endIndex = startIndex + 10
-      const paginatedRecipes = newRecipes.slice(startIndex, endIndex)
-
-      setRecipes((prevRecipes) => [...prevRecipes, ...paginatedRecipes])
-      setHasMore(endIndex < newRecipes.length)
-    } catch (error) {
-      console.error('Error fetching recipes:', error)
-    } finally {
-      setIsFetchingRecipes(false)
-    }
-  }
+    },
+    [],
+  )
 
   useEffect(() => {
+    console.log('Selected Ingredients:', selectedIngredients)
     if (selectedIngredients.length > 0) {
       fetchRecipes(selectedIngredients, page)
     }
-  }, [page])
+  }, [page, selectedIngredients, fetchRecipes])
 
   if (isLoading) return <div>Loading...</div>
   if (error) return <div>Error: {error.message}</div>
   if (!ingredients) return <div>No ingredients available</div>
 
-  const filteredIngredients = ingredients.filter((ingredient) =>
+  const filteredIngredients = ingredients.filter((ingredient: Ingredient) =>
     ingredient.strIngredient.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
@@ -106,91 +149,102 @@ export default function SearchPage() {
           </h2>
 
           <div className="mb-4 flex justify-center space-x-4">
-            {/* Cuisine Select */}
-            <Select>
-              <SelectTrigger className="h-16 w-80 bg-white text-lg font-bold text-gray-700">
-                <SelectValue placeholder="Select cuisine..." />
-              </SelectTrigger>
-              <SelectContent>
-                <ScrollArea className="className h-72 w-full bg-white">
-                  {['Italian', 'Chinese', 'Mexican', 'Indian'].map(
-                    (cuisine) => (
-                      <div
-                        key={cuisine}
-                        className="flex items-center p-2 hover:bg-gray-100"
-                      >
-                        <input type="checkbox" id={cuisine} className="mr-2" />
-                        <label
-                          htmlFor={cuisine}
-                          className="cursor-pointer font-bold text-gray-700"
-                        >
-                          {cuisine}
-                        </label>
-                      </div>
-                    ),
-                  )}
-                </ScrollArea>
-              </SelectContent>
-            </Select>
-
-            {/* Ingredients Select with Search */}
-            <Select>
-              <SelectTrigger className="h-16 w-80 bg-white text-lg font-bold text-gray-700">
-                <SelectValue placeholder="Select ingredients..." />
-              </SelectTrigger>
-              <SelectContent className="bg-white">
-                <div className="p-2">
+            {/* Cuisine Selection */}
+            <div>
+              <h3 className="mb-2 text-xl font-bold text-white">
+                Select Cuisines
+              </h3>
+              {cuisines.map((cuisine) => (
+                <div key={cuisine}>
                   <input
-                    type="text"
-                    placeholder="Search ingredients..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full rounded-md border p-2"
+                    type="checkbox"
+                    id={`cuisine-${cuisine}`}
+                    checked={selectedCuisines.includes(cuisine)}
+                    onChange={() => handleCuisineChange(cuisine)}
                   />
+                  <label
+                    htmlFor={`cuisine-${cuisine}`}
+                    className="ml-2 text-white"
+                  >
+                    {cuisine}
+                  </label>
                 </div>
-                <ScrollArea className="h-72 w-full">
-                  {filteredIngredients.length > 0 ? (
-                    filteredIngredients.map((ingredient) => (
-                      <div
-                        key={ingredient.idIngredient}
-                        className="flex items-center p-2 hover:bg-gray-100"
-                      >
-                        <input
-                          type="checkbox"
-                          id={ingredient.strIngredient}
-                          checked={selectedIngredients.includes(
-                            ingredient.strIngredient,
-                          )}
-                          onChange={() =>
-                            handleIngredientChange(ingredient.strIngredient)
-                          }
-                          className="mr-2"
-                        />
-                        <label
-                          htmlFor={ingredient.strIngredient}
-                          className="cursor-pointer font-bold text-gray-700"
-                        >
-                          {ingredient.strIngredient}
-                        </label>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="p-2 text-gray-500">
-                      No ingredients match your search.
-                    </div>
-                  )}
-                </ScrollArea>
-              </SelectContent>
-            </Select>
+              ))}
+            </div>
 
-            {/* Submit Button */}
-            <button
-              className="h-16 w-40 rounded bg-blue-500 text-lg font-bold text-white hover:bg-blue-600"
-              onClick={handleSubmit}
-            >
-              Submit
-            </button>
+            {/* Category Selection */}
+            <div>
+              <h3 className="mb-2 text-xl font-bold text-white">
+                Select Categories
+              </h3>
+              {categories.map((category) => (
+                <div key={category}>
+                  <input
+                    type="checkbox"
+                    id={`category-${category}`}
+                    checked={selectedCategories.includes(category)}
+                    onChange={() => handleCategoryChange(category)}
+                  />
+                  <label
+                    htmlFor={`category-${category}`}
+                    className="ml-2 text-white"
+                  >
+                    {category}
+                  </label>
+                </div>
+              ))}
+            </div>
+
+            {/* Ingredients Selection with Search */}
+            <div>
+              <h3 className="mb-2 text-xl font-bold text-white">
+                Select Ingredients
+              </h3>
+              <input
+                type="text"
+                placeholder="Search ingredients..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full rounded-md border p-2"
+              />
+              <ScrollArea className="h-72 w-full">
+                {filteredIngredients.length > 0 ? (
+                  filteredIngredients.map((ingredient) => (
+                    <div key={ingredient.idIngredient}>
+                      <input
+                        type="checkbox"
+                        id={`ingredient-${ingredient.idIngredient}`}
+                        checked={selectedIngredients.includes(
+                          ingredient.strIngredient,
+                        )}
+                        onChange={() =>
+                          handleIngredientChange(ingredient.strIngredient)
+                        }
+                      />
+                      <label
+                        htmlFor={`ingredient-${ingredient.idIngredient}`}
+                        className="ml-2 text-white"
+                      >
+                        {ingredient.strIngredient}
+                      </label>
+                    </div>
+                  ))
+                ) : (
+                  <div className="p-2 text-gray-500">
+                    No ingredients match your search.
+                  </div>
+                )}
+              </ScrollArea>
+            </div>
           </div>
+
+          {/* Submit Button */}
+          {/* <button
+            className="h-16 w-40 rounded bg-blue-500 text-lg font-bold text-white hover:bg-blue-600"
+            onClick={(e) => handleSubmit(e)}
+          >
+            Submit
+          </button> */}
 
           {/* Display Recipes after Submission */}
           <div className="mt-8">
@@ -216,6 +270,7 @@ export default function SearchPage() {
                         alt={recipe.strMeal}
                         className="h-40 w-full rounded-md object-cover"
                       />
+                      <p>{recipe.strCategory}</p>
                       <h4 className="mt-2 text-xl font-semibold">
                         {recipe.strMeal}
                       </h4>
