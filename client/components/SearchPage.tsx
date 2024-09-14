@@ -2,7 +2,6 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import useIngredients from '@/hooks/use-findrecipe'
 import { useNavigate, useOutletContext } from 'react-router-dom'
-// import { getMealByIngredients } from '@/api/meal'
 
 interface Ingredient {
   idIngredient: string
@@ -13,6 +12,8 @@ interface Recipe {
   idMeal: string
   strMeal: string
   strMealThumb: string
+  strCategory: string
+  strArea: string
 }
 
 interface OutletContextType {
@@ -73,16 +74,17 @@ export default function SearchPage() {
   }
 
   const handleCuisineChange = (cuisine: string) => {
-    setSelectedCuisines((prev) =>
-      prev.includes(cuisine)
-        ? prev.filter((item) => item !== cuisine)
-        : [...prev, cuisine],
-    )
+    setSelectedCuisines((prev) => (prev.includes(cuisine) ? [] : [cuisine]))
   }
 
   const fetchRecipes = useCallback(
-    async (ingredients: string[], category: string | null, pageNum: number) => {
-      console.log('Fetching recipes:', ingredients, category, pageNum)
+    async (
+      ingredients: string[],
+      category: string | null,
+      cuisine: string | null,
+      pageNum: number,
+    ) => {
+      console.log('Fetching recipes:', ingredients, category, cuisine, pageNum)
       if (ingredients.length === 0) return
 
       setIsFetchingRecipes(true)
@@ -91,7 +93,10 @@ export default function SearchPage() {
         const categoryParam = category
           ? `&category=${encodeURIComponent(category)}`
           : ''
-        const url = `/api/v1/meals/ingredients/${query}?${categoryParam}`
+        const cuisineParam = cuisine
+          ? `&cuisine=${encodeURIComponent(cuisine)}`
+          : ''
+        const url = `/api/v1/meals/ingredients/${query}?${categoryParam}${cuisineParam}`
 
         console.log('Fetching recipes from URL:', url)
 
@@ -122,15 +127,28 @@ export default function SearchPage() {
   useEffect(() => {
     console.log('Selected Ingredients:', selectedIngredients)
     console.log('Selected Category:', selectedCategories[0] || null)
+    console.log('Selected Cuisine:', selectedCuisines[0] || null)
     if (selectedIngredients.length > 0) {
-      fetchRecipes(selectedIngredients, selectedCategories[0] || null, page)
+      fetchRecipes(
+        selectedIngredients,
+        selectedCategories[0] || null,
+        selectedCuisines[0] || null,
+        page,
+      )
     }
-  }, [page, selectedIngredients, selectedCategories, fetchRecipes])
+  }, [
+    page,
+    selectedIngredients,
+    selectedCategories,
+    selectedCuisines,
+    fetchRecipes,
+  ])
 
   if (isLoading) return <div>Loading...</div>
   if (error) return <div>Error: {error.message}</div>
   if (!ingredients) return <div>No ingredients available</div>
 
+  // Define filteredIngredients here
   const filteredIngredients = ingredients.filter((ingredient: Ingredient) =>
     ingredient.strIngredient.toLowerCase().includes(searchTerm.toLowerCase()),
   )
@@ -152,7 +170,7 @@ export default function SearchPage() {
             {/* Cuisine Selection */}
             <div>
               <h3 className="mb-2 text-xl font-bold text-white">
-                Select Cuisines
+                Select Cuisine
               </h3>
               {cuisines.map((cuisine) => (
                 <div key={cuisine}>
@@ -246,14 +264,6 @@ export default function SearchPage() {
             </div>
           </div>
 
-          {/* Submit Button */}
-          {/* <button
-            className="h-16 w-40 rounded bg-blue-500 text-lg font-bold text-white hover:bg-blue-600"
-            onClick={(e) => handleSubmit(e)}
-          >
-            Submit
-          </button> */}
-
           {/* Display Recipes after Submission */}
           <div className="mt-8">
             {recipes.length > 0 ? (
@@ -278,7 +288,9 @@ export default function SearchPage() {
                         alt={recipe.strMeal}
                         className="h-40 w-full rounded-md object-cover"
                       />
-                      <p>{recipe.strCategory}</p>
+                      <p>
+                        {recipe.strCategory} - {recipe.strArea}
+                      </p>
                       <h4 className="mt-2 text-xl font-semibold">
                         {recipe.strMeal}
                       </h4>
