@@ -69,11 +69,7 @@ export default function SearchPage() {
   }
 
   const handleCategoryChange = (category: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((item) => item !== category)
-        : [...prev, category],
-    )
+    setSelectedCategories((prev) => (prev.includes(category) ? [] : [category]))
   }
 
   const handleCuisineChange = (cuisine: string) => {
@@ -85,16 +81,19 @@ export default function SearchPage() {
   }
 
   const fetchRecipes = useCallback(
-    async (ingredients: string[], pageNum: number) => {
-      console.log('Fetching recipes:', ingredients, pageNum) // Log ingredients and page number
+    async (ingredients: string[], category: string | null, pageNum: number) => {
+      console.log('Fetching recipes:', ingredients, category, pageNum)
       if (ingredients.length === 0) return
 
       setIsFetchingRecipes(true)
       try {
         const query = ingredients.join(',')
-        const url = `/api/v1/meals/ingredients/${query}`
+        const categoryParam = category
+          ? `&category=${encodeURIComponent(category)}`
+          : ''
+        const url = `/api/v1/meals/ingredients/${query}?${categoryParam}`
 
-        console.log('Fetching recipes from URL:', url) // Log the request URL
+        console.log('Fetching recipes from URL:', url)
 
         const response = await fetch(url)
         if (!response.ok) {
@@ -102,9 +101,9 @@ export default function SearchPage() {
         }
 
         const data = await response.json()
-        console.log('Fetched Recipes from API:', data) // Log the fetched data
+        console.log('Fetched Recipes from API:', data)
 
-        const newRecipes = data || [] // Ensure data is an array
+        const newRecipes = data || []
         const startIndex = (pageNum - 1) * 10
         const endIndex = startIndex + 10
         const paginatedRecipes = newRecipes.slice(startIndex, endIndex)
@@ -112,7 +111,7 @@ export default function SearchPage() {
         setRecipes((prevRecipes) => [...paginatedRecipes])
         setHasMore(endIndex < newRecipes.length)
       } catch (error) {
-        console.error('Error fetching recipes:', error) // Log error details
+        console.error('Error fetching recipes:', error)
       } finally {
         setIsFetchingRecipes(false)
       }
@@ -122,10 +121,11 @@ export default function SearchPage() {
 
   useEffect(() => {
     console.log('Selected Ingredients:', selectedIngredients)
+    console.log('Selected Category:', selectedCategories[0] || null)
     if (selectedIngredients.length > 0) {
-      fetchRecipes(selectedIngredients, page)
+      fetchRecipes(selectedIngredients, selectedCategories[0] || null, page)
     }
-  }, [page, selectedIngredients, fetchRecipes])
+  }, [page, selectedIngredients, selectedCategories, fetchRecipes])
 
   if (isLoading) return <div>Loading...</div>
   if (error) return <div>Error: {error.message}</div>
@@ -175,7 +175,7 @@ export default function SearchPage() {
             {/* Category Selection */}
             <div>
               <h3 className="mb-2 text-xl font-bold text-white">
-                Select Categories
+                Select Category
               </h3>
               {categories.map((category) => (
                 <div key={category}>
@@ -235,6 +235,14 @@ export default function SearchPage() {
                   </div>
                 )}
               </ScrollArea>
+
+              {/* Clear Ingredients Button */}
+              <button
+                className="mt-2 rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+                onClick={() => setSelectedIngredients([])}
+              >
+                Clear Ingredients
+              </button>
             </div>
           </div>
 
