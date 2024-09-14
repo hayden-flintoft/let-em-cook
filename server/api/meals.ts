@@ -46,11 +46,12 @@ router.get('/:id', async (req, res) => {
   }
 })
 
-// GET /api/v1/meals/ingredients/:q - Get meals by ingredients and category
+// GET /api/v1/meals/ingredients/:q - Get meals by ingredients, category, and cuisine
 router.get('/ingredients/:q', async (req, res) => {
   try {
     const ingredientsQuery = req.params.q
     const category = req.query.category as string | undefined
+    const cuisine = req.query.cuisine as string | undefined
 
     const response = await request.get(
       `https://www.themealdb.com/api/json/v2/${process.env.MEALDB_API_KEY}/filter.php?i=${ingredientsQuery}`,
@@ -73,6 +74,11 @@ router.get('/ingredients/:q', async (req, res) => {
     // Filter meals by category if a category is selected
     if (category) {
       meals = meals.filter((meal) => meal.strCategory === category)
+    }
+
+    // Filter meals by cuisine if a cuisine is selected
+    if (cuisine) {
+      meals = meals.filter((meal) => meal.strArea === cuisine)
     }
 
     res.json(meals) // Return detailed meals
