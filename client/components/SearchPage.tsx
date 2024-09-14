@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import useIngredients from '@/hooks/use-findrecipe'
 import { useNavigate, useOutletContext } from 'react-router-dom'
+import { getLatestMeals } from '@/api/meal'
 
 interface Ingredient {
   idIngredient: string
@@ -14,6 +15,7 @@ interface Recipe {
   strMealThumb: string
   strCategory: string
   strArea: string
+  // Include other properties if needed
 }
 
 interface OutletContextType {
@@ -29,6 +31,7 @@ export default function SearchPage() {
   const { data: ingredients, isLoading, error } = useIngredients()
   const [searchTerm, setSearchTerm] = useState('')
   const [recipes, setRecipes] = useState<Recipe[]>([])
+  const [latestMeals, setLatestMeals] = useState<Recipe[]>([])
   const [isFetchingRecipes, setIsFetchingRecipes] = useState(false)
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
@@ -124,6 +127,18 @@ export default function SearchPage() {
     [],
   )
 
+  const fetchLatestMeals = useCallback(async () => {
+    try {
+      setIsFetchingRecipes(true)
+      const meals = await getLatestMeals()
+      setLatestMeals(meals)
+    } catch (error) {
+      console.error('Error fetching latest meals:', error)
+    } finally {
+      setIsFetchingRecipes(false)
+    }
+  }, [])
+
   useEffect(() => {
     console.log('Selected Ingredients:', selectedIngredients)
     console.log('Selected Category:', selectedCategories[0] || null)
@@ -135,6 +150,8 @@ export default function SearchPage() {
         selectedCuisines[0] || null,
         page,
       )
+    } else {
+      fetchLatestMeals()
     }
   }, [
     page,
@@ -142,13 +159,13 @@ export default function SearchPage() {
     selectedCategories,
     selectedCuisines,
     fetchRecipes,
+    fetchLatestMeals,
   ])
 
   if (isLoading) return <div>Loading...</div>
   if (error) return <div>Error: {error.message}</div>
   if (!ingredients) return <div>No ingredients available</div>
 
-  // Define filteredIngredients here
   const filteredIngredients = ingredients.filter((ingredient: Ingredient) =>
     ingredient.strIngredient.toLowerCase().includes(searchTerm.toLowerCase()),
   )
@@ -264,35 +281,68 @@ export default function SearchPage() {
             </div>
           </div>
 
-          {/* Display Recipes after Submission */}
+          {/* Display Recipes or Latest Meals */}
           <div className="mt-8">
-            {recipes.length > 0 ? (
+            {selectedIngredients.length > 0 ? (
+              recipes.length > 0 ? (
+                <div>
+                  <h3 className="mb-4 text-2xl font-bold text-white">
+                    Recipes Found:
+                  </h3>
+                  <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {recipes.map((recipe, index) => (
+                      <li
+                        key={recipe.idMeal}
+                        ref={
+                          index === recipes.length - 1
+                            ? lastRecipeElementRef
+                            : null
+                        }
+                        className="cursor-pointer rounded-lg bg-white p-4 shadow"
+                        onClick={() => navigate(`/recipe/${recipe.idMeal}`)}
+                      >
+                        <img
+                          src={recipe.strMealThumb}
+                          alt={recipe.strMeal}
+                          className="h-40 w-full rounded-md object-cover"
+                        />
+                        <p>
+                          {recipe.strCategory} - {recipe.strArea}
+                        </p>
+                        <h4 className="mt-2 text-xl font-semibold">
+                          {recipe.strMeal}
+                        </h4>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                <div className="text-white">
+                  No recipes found. Try different ingredients.
+                </div>
+              )
+            ) : latestMeals.length > 0 ? (
               <div>
                 <h3 className="mb-4 text-2xl font-bold text-white">
-                  Recipes Found:
+                  Latest Meals:
                 </h3>
                 <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {recipes.map((recipe, index) => (
+                  {latestMeals.map((meal) => (
                     <li
-                      key={recipe.idMeal}
-                      ref={
-                        index === recipes.length - 1
-                          ? lastRecipeElementRef
-                          : null
-                      }
+                      key={meal.idMeal}
                       className="cursor-pointer rounded-lg bg-white p-4 shadow"
-                      onClick={() => navigate(`/recipe/${recipe.idMeal}`)}
+                      onClick={() => navigate(`/recipe/${meal.idMeal}`)}
                     >
                       <img
-                        src={recipe.strMealThumb}
-                        alt={recipe.strMeal}
+                        src={meal.strMealThumb}
+                        alt={meal.strMeal}
                         className="h-40 w-full rounded-md object-cover"
                       />
                       <p>
-                        {recipe.strCategory} - {recipe.strArea}
+                        {meal.strCategory} - {meal.strArea}
                       </p>
                       <h4 className="mt-2 text-xl font-semibold">
-                        {recipe.strMeal}
+                        {meal.strMeal}
                       </h4>
                     </li>
                   ))}
@@ -300,12 +350,10 @@ export default function SearchPage() {
               </div>
             ) : (
               <div className="text-white">
-                No recipes found. Try different ingredients.
+                No latest meals available at the moment.
               </div>
             )}
-            {isFetchingRecipes && (
-              <div className="text-white">Loading more recipes...</div>
-            )}
+            {isFetchingRecipes && <div className="text-white">Loading...</div>}
           </div>
         </div>
       </div>

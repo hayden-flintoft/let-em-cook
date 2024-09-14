@@ -31,3 +31,16 @@ export async function getMealByIngredients(
   console.log(`meal list response: ${mealListItems}`)
   return mealListItems // Return detailed meals
 }
+
+// GET /api/v1/meals/latest - Get the latest meals
+export async function getLatestMeals(): Promise<Meal[]> {
+  const response = await request.get(`${serverURL}/meals/latest`)
+  const mealListResponse = response.body as Meal[]
+
+  if (!mealListResponse) {
+    return [] // No meals found
+  }
+
+  console.log('latest meals response:', mealListResponse)
+  return mealListResponse // Return detailed meals
+}
