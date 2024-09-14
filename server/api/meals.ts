@@ -46,11 +46,14 @@ router.get('/:id', async (req, res) => {
   }
 })
 
-// Get /api/meals/:i - Get a meal by multiple ingredients search
+// GET /api/v1/meals/ingredients/:q - Get meals by ingredients and category
 router.get('/ingredients/:q', async (req, res) => {
   try {
+    const ingredientsQuery = req.params.q
+    const category = req.query.category as string | undefined
+
     const response = await request.get(
-      `https://www.themealdb.com/api/json/v2/${process.env.MEALDB_API_KEY}/filter.php?i=${req.params.q}`,
+      `https://www.themealdb.com/api/json/v2/${process.env.MEALDB_API_KEY}/filter.php?i=${ingredientsQuery}`,
     )
 
     if (!response.body || !response.body.meals) {
@@ -65,14 +68,17 @@ router.get('/ingredients/:q', async (req, res) => {
     )
 
     const mealDetailsResponses = await Promise.all(mealDetailsPromises)
-    response.body.meals = mealDetailsResponses.map((res) => res.body.meals[0])
+    let meals = mealDetailsResponses.map((res) => res.body.meals[0])
 
-    console.log(response.body.meals)
+    // Filter meals by category if a category is selected
+    if (category) {
+      meals = meals.filter((meal) => meal.strCategory === category)
+    }
 
-    res.json(response.body.meals) // Return detailed meals
+    res.json(meals) // Return detailed meals
   } catch (error) {
     if (error instanceof Error) {
-      res.status(500).send((error as Error).message)
+      res.status(500).send(error.message)
     } else {
       res.status(500).send('Something went wrong')
     }
