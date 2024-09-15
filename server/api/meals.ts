@@ -12,7 +12,8 @@ router.get('/search', async (req: Request, res: Response) => {
     const category = req.query.category as string | undefined
     const cuisine = req.query.cuisine as string | undefined
     const page = parseInt(req.query.page as string) || 1
-    const mealsPerPage = 10
+    // Adjust the mealsPerPage to accept 'limit' from query parameters
+    const mealsPerPage = parseInt(req.query.limit as string) || 9
 
     let meals: any[] = []
 
@@ -41,7 +42,7 @@ router.get('/search', async (req: Request, res: Response) => {
       meals = response.body.meals || []
     } else {
       // Fetch 9 random meals
-      const randomMealPromises = Array.from({ length: 9 }, () =>
+      const randomMealPromises = Array.from({ length: 18 }, () =>
         request.get(
           `https://www.themealdb.com/api/json/v2/${process.env.MEALDB_API_KEY}/random.php`,
         ),
@@ -116,6 +117,30 @@ router.get('/search', async (req: Request, res: Response) => {
     } else {
       res.status(500).send('Something went wrong')
     }
+  }
+})
+
+// GET /api/v1/meals/letter/:letter - Get meals starting with a specific letter
+router.get('/letter/:letter', async (req, res) => {
+  try {
+    const { letter } = req.params
+
+    if (!/^[a-zA-Z]$/.test(letter)) {
+      return res.status(400).json({ error: 'Invalid letter parameter' })
+    }
+
+    const response = await request.get(
+      `https://www.themealdb.com/api/json/v1/${process.env.MEALDB_API_KEY}/search.php?f=${letter.toLowerCase()}`,
+    )
+
+    if (!response.body || !response.body.meals) {
+      return res.json({ meals: [] })
+    }
+
+    res.json({ meals: response.body.meals })
+  } catch (error) {
+    console.error('Error in /letter/:letter:', error)
+    res.status(500).json({ error: 'Failed to fetch recipes' })
   }
 })
 
