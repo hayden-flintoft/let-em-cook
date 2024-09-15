@@ -3,12 +3,11 @@
  * @returns { Promise<void> }
  */
 export const up = function (knex) {
-  return knex.schema.createTable('user_recipe_comments', (table) => {
+  return knex.schema.createTable('user_likes', (table) => {
     table.increments('id').primary()
-    table.integer('user_id')
-    table.integer('mealdb_id')
-    table.string('comment')
-    table.string('author')
+    table.string('clerk_id')
+    table.integer('recipe_id')
+    table.boolean('is_clicked')
   })
 }
 
@@ -17,5 +16,5 @@ export const up = function (knex) {
  * @returns { Promise<void> }
  */
 export const down = function (knex) {
-  return knex.schema.dropTable('user_recipe_comments')
+  return knex.schema.dropTable('user_bookmarks')
 }
