@@ -1,5 +1,6 @@
 import React from 'react'
 import RecipeListItem from '@/components/RecipeListItem'
+import ScrollToTopFAB from './ScrollToTopFAB'
 
 interface Recipe {
   idMeal: string
