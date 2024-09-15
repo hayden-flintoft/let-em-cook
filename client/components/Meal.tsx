@@ -5,6 +5,8 @@ export default function RecipePage() {
   const { id } = useParams<{ id: string }>() // Recipe ID from URL
   const [meal, setMeal] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [orderNote, setOrderNote] = useState('') // Store current order note
+  const [comments, setComments] = useState<string[]>([]) // Store all comments
 
   useEffect(() => {
     if (id) {
@@ -25,6 +27,17 @@ export default function RecipePage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleAddComment = () => {
+    if (orderNote.trim()) {
+      setComments([...comments, orderNote]) // Add current note to the list of comments
+      setOrderNote('') // Clear the textarea
+    }
+  }
+
+  const handleClearComment = () => {
+    setOrderNote('') // Clear the textarea
   }
 
   if (loading) return <div>Loading...</div>
@@ -98,6 +111,55 @@ export default function RecipePage() {
                       className="w-[60%] rounded-lg"
                     ></iframe>
                   )}
+                </div>
+
+                {/* Order notes box */}
+                <div className="mt-6">
+                  <label htmlFor="OrderNotes" className="sr-only">
+                    Order notes
+                  </label>
+                  <div className="overflow-hidden">
+                    <textarea
+                      id="OrderNotes"
+                      value={orderNote}
+                      onChange={(e) => setOrderNote(e.target.value)} // Capture textarea input
+                      className="w-full resize-none border-x-0 border-t-0 border-gray-200 px-0 align-top sm:text-sm"
+                      rows="4"
+                      placeholder="Enter any additional order notes..."
+                    ></textarea>
+
+                    <div className="flex items-center justify-end gap-2 py-3">
+                      <button
+                        type="button"
+                        onClick={handleClearComment} // Clear textarea
+                        className="rounded bg-gray-200 px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-gray-600"
+                      >
+                        Clear
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handleAddComment} // Add comment
+                        className="rounded bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700"
+                      >
+                        Add
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Display comments */}
+                <div className="mt-6">
+                  <h3 className="text-xl font-bold text-[#9E3700]">
+                    Comments:
+                  </h3>
+                  <ul className="space-y-2">
+                    {comments.map((comment, index) => (
+                      <li key={index} className="rounded-lg bg-gray-100 p-2">
+                        {comment}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             </div>

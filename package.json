@@ -41,6 +41,8 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@tabler/icons-react": "^3.16.0",
     "@tailwindcss/line-clamp": "^0.4.4",
+=======
+
     "@vitest/coverage-v8": "^1.6.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
