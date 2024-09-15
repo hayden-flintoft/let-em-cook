@@ -44,3 +44,4 @@ export async function getLatestMeals(): Promise<Meal[]> {
   console.log('latest meals response:', mealListResponse)
   return mealListResponse // Return detailed meals
 }
+

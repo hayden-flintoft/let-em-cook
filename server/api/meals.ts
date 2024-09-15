@@ -12,7 +12,8 @@ router.get('/search', async (req: Request, res: Response) => {
     const category = req.query.category as string | undefined
     const cuisine = req.query.cuisine as string | undefined
     const page = parseInt(req.query.page as string) || 1
-    const mealsPerPage = 10
+    // Adjust the mealsPerPage to accept 'limit' from query parameters
+    const mealsPerPage = parseInt(req.query.limit as string) || 9
 
     let meals: any[] = []
 
@@ -41,7 +42,7 @@ router.get('/search', async (req: Request, res: Response) => {
       meals = response.body.meals || []
     } else {
       // Fetch 9 random meals
-      const randomMealPromises = Array.from({ length: 9 }, () =>
+      const randomMealPromises = Array.from({ length: 18 }, () =>
         request.get(
           `https://www.themealdb.com/api/json/v2/${process.env.MEALDB_API_KEY}/random.php`,
         ),
@@ -111,6 +112,35 @@ router.get('/search', async (req: Request, res: Response) => {
     })
   } catch (error) {
     console.error('Error in /search:', error)
+    if (error instanceof Error) {
+      res.status(500).send(error.message)
+    } else {
+      res.status(500).send('Something went wrong')
+    }
+  }
+})
+
+// GET /api/v1/meals/by-letter - Get meals by the first letter
+router.get('/by-letter', async (req: Request, res: Response) => {
+  try {
+    const letter = req.query.letter as string
+
+    if (!letter || letter.length !== 1) {
+      return res.status(400).json({ error: 'Please provide a single letter.' })
+    }
+
+    const response = await request.get(
+      `https://www.themealdb.com/api/json/v1/1/search.php?f=${letter}`,
+    )
+
+    if (!response.body || !response.body.meals) {
+      return res.json({ meals: [], totalMeals: 0 })
+    }
+
+    const meals = response.body.meals
+    res.json({ meals, totalMeals: meals.length })
+  } catch (error) {
+    console.error('Error in /by-letter:', error)
     if (error instanceof Error) {
       res.status(500).send(error.message)
     } else {

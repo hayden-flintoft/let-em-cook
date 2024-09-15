@@ -6,6 +6,7 @@ import Layout from './components/Layout.tsx'
 // import FindRecipe from './components/FindRecipe.tsx'
 // import { CollapsibleDemo } from './components/Collapsible.tsx'
 import SearchPage from './components/SearchPage.tsx'
+import RecipesByLetterPage from './components/RecipesByLetterPage.tsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -13,6 +14,7 @@ const router = createBrowserRouter(
       <Route index element={<Home />} />
       <Route path="/recipe/:id" element={<Meal />} />
       <Route path="/search" element={<SearchPage />} />
+      <Route path="recipes-by-letter" element={<RecipesByLetterPage />} />
     </Route>,
   ),
 )

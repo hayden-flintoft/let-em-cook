@@ -39,6 +39,12 @@ export default function Header() {
           >
             Search
           </Link>
+          <Link
+            to="/recipes-by-letter"
+            className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]"
+          >
+            All Recipes
+          </Link>
         </nav>
 
         {/* User Authentication Buttons */}
