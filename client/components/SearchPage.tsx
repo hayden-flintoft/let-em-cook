@@ -3,6 +3,9 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import useIngredients from '@/hooks/use-findrecipe'
 import { useNavigate, useOutletContext } from 'react-router-dom'
 import { getLatestMeals } from '@/api/meal'
+import { getCuisines } from '@/api/cuisines'
+import { getCategories } from '@/api/categories'
+import Select, { components } from 'react-select'
 
 interface Ingredient {
   idIngredient: string
@@ -15,7 +18,22 @@ interface Recipe {
   strMealThumb: string
   strCategory: string
   strArea: string
-  // Include other properties if needed
+}
+
+interface CuisineOption {
+  value: string
+  label: string
+}
+
+interface CategoryOption {
+  value: string
+  label: string
+}
+
+interface IngredientOption {
+  value: string
+  label: string
+  image: string // Add image URL to the ingredient option
 }
 
 interface OutletContextType {
@@ -29,7 +47,11 @@ interface OutletContextType {
 
 export default function SearchPage() {
   const { data: ingredients, isLoading, error } = useIngredients()
-  const [searchTerm, setSearchTerm] = useState('')
+  const [cuisines, setCuisines] = useState<CuisineOption[]>([])
+  const [categories, setCategories] = useState<CategoryOption[]>([])
+  const [ingredientOptions, setIngredientOptions] = useState<
+    IngredientOption[]
+  >([])
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [latestMeals, setLatestMeals] = useState<Recipe[]>([])
   const [isFetchingRecipes, setIsFetchingRecipes] = useState(false)
@@ -46,9 +68,6 @@ export default function SearchPage() {
     setSelectedCuisines,
   } = useOutletContext<OutletContextType>()
 
-  const categories = ['Vegetarian', 'Vegan', 'Dessert', 'Breakfast']
-  const cuisines = ['Italian', 'Chinese', 'Mexican', 'Indian']
-
   const observer = useRef<IntersectionObserver | null>(null)
   const lastRecipeElementRef = useCallback(
     (node: HTMLLIElement | null) => {
@@ -64,20 +83,20 @@ export default function SearchPage() {
     [isFetchingRecipes, hasMore],
   )
 
-  const handleIngredientChange = (ingredient: string) => {
-    setSelectedIngredients((prev) =>
-      prev.includes(ingredient)
-        ? prev.filter((item) => item !== ingredient)
-        : [...prev, ingredient],
-    )
+  const handleIngredientChange = (selectedOptions: IngredientOption[]) => {
+    const selectedValues = selectedOptions.map((option) => option.value)
+    setSelectedIngredients(selectedValues)
+    setPage(1) // Reset page when filters change
   }
 
-  const handleCategoryChange = (category: string) => {
-    setSelectedCategories((prev) => (prev.includes(category) ? [] : [category]))
+  const handleCategoryChange = (selectedOption: CategoryOption | null) => {
+    setSelectedCategories(selectedOption ? [selectedOption.value] : [])
+    setPage(1) // Reset page when filters change
   }
 
-  const handleCuisineChange = (cuisine: string) => {
-    setSelectedCuisines((prev) => (prev.includes(cuisine) ? [] : [cuisine]))
+  const handleCuisineChange = (selectedOption: CuisineOption | null) => {
+    setSelectedCuisines(selectedOption ? [selectedOption.value] : [])
+    setPage(1) // Reset page when filters change
   }
 
   const fetchRecipes = useCallback(
@@ -87,19 +106,22 @@ export default function SearchPage() {
       cuisine: string | null,
       pageNum: number,
     ) => {
-      console.log('Fetching recipes:', ingredients, category, cuisine, pageNum)
       if (ingredients.length === 0) return
+
+      console.log('Fetching recipes:', ingredients, category, cuisine, pageNum)
 
       setIsFetchingRecipes(true)
       try {
         const query = ingredients.join(',')
-        const categoryParam = category
-          ? `&category=${encodeURIComponent(category)}`
-          : ''
-        const cuisineParam = cuisine
-          ? `&cuisine=${encodeURIComponent(cuisine)}`
-          : ''
-        const url = `/api/v1/meals/ingredients/${query}?${categoryParam}${cuisineParam}`
+        let url = `/api/v1/meals/ingredients/${query}`
+
+        // Append category and cuisine parameters to the URL if provided
+        if (category) {
+          url += `&category=${encodeURIComponent(category)}`
+        }
+        if (cuisine) {
+          url += `&cuisine=${encodeURIComponent(cuisine)}`
+        }
 
         console.log('Fetching recipes from URL:', url)
 
@@ -111,13 +133,16 @@ export default function SearchPage() {
         const data = await response.json()
         console.log('Fetched Recipes from API:', data)
 
-        const newRecipes = data || []
         const startIndex = (pageNum - 1) * 10
         const endIndex = startIndex + 10
-        const paginatedRecipes = newRecipes.slice(startIndex, endIndex)
+        const paginatedRecipes = data.slice(startIndex, endIndex)
 
-        setRecipes((prevRecipes) => [...paginatedRecipes])
-        setHasMore(endIndex < newRecipes.length)
+        setRecipes((prevRecipes) =>
+          pageNum === 1
+            ? paginatedRecipes
+            : [...prevRecipes, ...paginatedRecipes],
+        )
+        setHasMore(endIndex < data.length)
       } catch (error) {
         console.error('Error fetching recipes:', error)
       } finally {
@@ -128,8 +153,8 @@ export default function SearchPage() {
   )
 
   const fetchLatestMeals = useCallback(async () => {
+    setIsFetchingRecipes(true)
     try {
-      setIsFetchingRecipes(true)
       const meals = await getLatestMeals()
       setLatestMeals(meals)
     } catch (error) {
@@ -140,21 +165,62 @@ export default function SearchPage() {
   }, [])
 
   useEffect(() => {
-    console.log('Selected Ingredients:', selectedIngredients)
-    console.log('Selected Category:', selectedCategories[0] || null)
-    console.log('Selected Cuisine:', selectedCuisines[0] || null)
+    const fetchCuisines = async () => {
+      try {
+        const fetchedCuisines = await getCuisines()
+        const cuisineOptions = fetchedCuisines.map((cuisine: string) => ({
+          value: cuisine,
+          label: cuisine,
+        }))
+        setCuisines(cuisineOptions)
+      } catch (err) {
+        console.error('Error fetching cuisines:', err)
+      }
+    }
+
+    const fetchCategories = async () => {
+      try {
+        const fetchedCategories = await getCategories()
+        const categoryOptions = fetchedCategories.map((category: string) => ({
+          value: category,
+          label: category,
+        }))
+        setCategories(categoryOptions)
+      } catch (err) {
+        console.error('Error fetching categories:', err)
+      }
+    }
+
+    const fetchIngredientOptions = () => {
+      if (ingredients) {
+        const options = ingredients.map((ingredient: Ingredient) => ({
+          value: ingredient.strIngredient,
+          label: ingredient.strIngredient,
+          image: `https://www.themealdb.com/images/ingredients/${ingredient.strIngredient}-Small.png`, // Add image URL
+        }))
+        setIngredientOptions(options)
+      }
+    }
+
+    fetchCuisines()
+    fetchCategories()
+    fetchIngredientOptions() // Fetch ingredient options
+  }, [ingredients])
+
+  useEffect(() => {
     if (selectedIngredients.length > 0) {
+      setRecipes([]) // Reset recipes when filters change
       fetchRecipes(
         selectedIngredients,
         selectedCategories[0] || null,
         selectedCuisines[0] || null,
-        page,
+        1, // Always start with page 1 on new search
       )
     } else {
+      setRecipes([]) // Reset recipes when switching to latest meals
       fetchLatestMeals()
     }
   }, [
-    page,
     selectedIngredients,
     selectedCategories,
     selectedCuisines,
@@ -162,12 +228,39 @@ export default function SearchPage() {
     fetchLatestMeals,
   ])
 
+  useEffect(() => {
+    if (page > 1) {
+      fetchRecipes(
+        selectedIngredients,
+        selectedCategories[0] || null,
+        selectedCuisines[0] || null,
+        page,
+      )
+    }
+  }, [
+    page,
+    fetchRecipes,
+    selectedIngredients,
+    selectedCategories,
+    selectedCuisines,
+  ])
+
   if (isLoading) return <div>Loading...</div>
   if (error) return <div>Error: {error.message}</div>
   if (!ingredients) return <div>No ingredients available</div>
 
-  const filteredIngredients = ingredients.filter((ingredient: Ingredient) =>
-    ingredient.strIngredient.toLowerCase().includes(searchTerm.toLowerCase()),
+  // Custom component to display ingredient images in the dropdown (with image left of the label)
+  const Option = (props: any) => (
+    <components.Option {...props}>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <img
+          src={props.data.image}
+          alt={props.data.label}
+          style={{ width: 30, marginRight: 10 }}
+        />
+        {props.data.label}
+      </div>
+    </components.Option>
   )
 
   return (
@@ -189,22 +282,13 @@ export default function SearchPage() {
               <h3 className="mb-2 text-xl font-bold text-white">
                 Select Cuisine
               </h3>
-              {cuisines.map((cuisine) => (
-                <div key={cuisine}>
-                  <input
-                    type="checkbox"
-                    id={`cuisine-${cuisine}`}
-                    checked={selectedCuisines.includes(cuisine)}
-                    onChange={() => handleCuisineChange(cuisine)}
-                  />
-                  <label
-                    htmlFor={`cuisine-${cuisine}`}
-                    className="ml-2 text-white"
-                  >
-                    {cuisine}
-                  </label>
-                </div>
-              ))}
+              <Select
+                options={cuisines}
+                onChange={handleCuisineChange}
+                isClearable
+                placeholder="Select Cuisine..."
+                className="text-black"
+              />
             </div>
 
             {/* Category Selection */}
@@ -212,72 +296,30 @@ export default function SearchPage() {
               <h3 className="mb-2 text-xl font-bold text-white">
                 Select Category
               </h3>
-              {categories.map((category) => (
-                <div key={category}>
-                  <input
-                    type="checkbox"
-                    id={`category-${category}`}
-                    checked={selectedCategories.includes(category)}
-                    onChange={() => handleCategoryChange(category)}
-                  />
-                  <label
-                    htmlFor={`category-${category}`}
-                    className="ml-2 text-white"
-                  >
-                    {category}
-                  </label>
-                </div>
-              ))}
+              <Select
+                options={categories} // Use react-select for categories
+                onChange={handleCategoryChange}
+                isClearable
+                placeholder="Select Category..."
+                className="text-black"
+              />
             </div>
 
-            {/* Ingredients Selection with Search */}
+            {/* Ingredients Selection with Search, Multi-select & Images */}
             <div>
               <h3 className="mb-2 text-xl font-bold text-white">
                 Select Ingredients
               </h3>
-              <input
-                type="text"
-                placeholder="Search ingredients..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full rounded-md border p-2"
+              <Select
+                options={ingredientOptions} // Use ingredient options for select
+                onChange={handleIngredientChange}
+                isClearable
+                isMulti // Enable multi-select
+                isSearchable // Enable searchable dropdown
+                placeholder="Search and select ingredients..."
+                className="text-black"
+                components={{ Option }} // Use custom Option component to display images
               />
-              <ScrollArea className="h-72 w-full">
-                {filteredIngredients.length > 0 ? (
-                  filteredIngredients.map((ingredient) => (
-                    <div key={ingredient.idIngredient}>
-                      <input
-                        type="checkbox"
-                        id={`ingredient-${ingredient.idIngredient}`}
-                        checked={selectedIngredients.includes(
-                          ingredient.strIngredient,
-                        )}
-                        onChange={() =>
-                          handleIngredientChange(ingredient.strIngredient)
-                        }
-                      />
-                      <label
-                        htmlFor={`ingredient-${ingredient.idIngredient}`}
-                        className="ml-2 text-white"
-                      >
-                        {ingredient.strIngredient}
-                      </label>
-                    </div>
-                  ))
-                ) : (
-                  <div className="p-2 text-gray-500">
-                    No ingredients match your search.
-                  </div>
-                )}
-              </ScrollArea>
-
-              {/* Clear Ingredients Button */}
-              <button
-                className="mt-2 rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
-                onClick={() => setSelectedIngredients([])}
-              >
-                Clear Ingredients
-              </button>
             </div>
           </div>
 
