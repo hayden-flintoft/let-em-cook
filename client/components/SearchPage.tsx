@@ -1,11 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import useIngredients from '@/hooks/use-findrecipe'
 import { useNavigate, useOutletContext } from 'react-router-dom'
-import { getLatestMeals } from '@/api/meal'
 import { getCuisines } from '@/api/cuisines'
 import { getCategories } from '@/api/categories'
 import Select, { components } from 'react-select'
+import useIngredients from '@/hooks/use-findrecipe'
 
 interface Ingredient {
   idIngredient: string
@@ -53,7 +51,6 @@ export default function SearchPage() {
     IngredientOption[]
   >([])
   const [recipes, setRecipes] = useState<Recipe[]>([])
-  const [latestMeals, setLatestMeals] = useState<Recipe[]>([])
   const [isFetchingRecipes, setIsFetchingRecipes] = useState(false)
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
@@ -99,6 +96,15 @@ export default function SearchPage() {
     setPage(1) // Reset page when filters change
   }
 
+  // Add a function to handle clearing all search parameters
+  const handleClearParameters = () => {
+    setSelectedIngredients([])
+    setSelectedCategories([])
+    setSelectedCuisines([])
+    setPage(1)
+    setRecipes([])
+  }
+
   const fetchRecipes = useCallback(
     async (
       ingredients: string[],
@@ -106,24 +112,24 @@ export default function SearchPage() {
       cuisine: string | null,
       pageNum: number,
     ) => {
-      if (ingredients.length === 0) return
-
-      console.log('Fetching recipes:', ingredients, category, cuisine, pageNum)
-
       setIsFetchingRecipes(true)
+
       try {
-        const query = ingredients.join(',')
-        let url = `/api/v1/meals/ingredients/${query}`
+        let url = '/api/v1/meals/search?'
 
-        // Append category and cuisine parameters to the URL if provided
+        if (ingredients.length > 0) {
+          url += `ingredients=${ingredients.join(',')}&`
+        }
+
         if (category) {
-          url += `&category=${encodeURIComponent(category)}`
-        }
-        if (cuisine) {
-          url += `&cuisine=${encodeURIComponent(cuisine)}`
+          url += `category=${encodeURIComponent(category)}&`
         }
 
-        console.log('Fetching recipes from URL:', url)
+        if (cuisine) {
+          url += `cuisine=${encodeURIComponent(cuisine)}&`
+        }
+
+        url += `page=${pageNum}`
 
         const response = await fetch(url)
         if (!response.ok) {
@@ -133,16 +139,12 @@ export default function SearchPage() {
         const data = await response.json()
         console.log('Fetched Recipes from API:', data)
 
-        const startIndex = (pageNum - 1) * 10
-        const endIndex = startIndex + 10
-        const paginatedRecipes = data.slice(startIndex, endIndex)
+        const fetchedRecipes = data.meals || []
 
         setRecipes((prevRecipes) =>
-          pageNum === 1
-            ? paginatedRecipes
-            : [...prevRecipes, ...paginatedRecipes],
+          pageNum === 1 ? fetchedRecipes : [...prevRecipes, ...fetchedRecipes],
         )
-        setHasMore(endIndex < data.length)
+        setHasMore(data.hasMore)
       } catch (error) {
         console.error('Error fetching recipes:', error)
       } finally {
@@ -152,17 +154,33 @@ export default function SearchPage() {
     [],
   )
 
-  const fetchLatestMeals = useCallback(async () => {
-    setIsFetchingRecipes(true)
-    try {
-      const meals = await getLatestMeals()
-      setLatestMeals(meals)
-    } catch (error) {
-      console.error('Error fetching latest meals:', error)
-    } finally {
-      setIsFetchingRecipes(false)
+  useEffect(() => {
+    setPage(1) // Reset page when filters change
+    setRecipes([]) // Reset recipes when filters change
+    fetchRecipes(
+      selectedIngredients,
+      selectedCategories[0] || null,
+      selectedCuisines[0] || null,
+      1,
+    )
+  }, [selectedIngredients, selectedCategories, selectedCuisines, fetchRecipes])
+
+  useEffect(() => {
+    if (page > 1) {
+      fetchRecipes(
+        selectedIngredients,
+        selectedCategories[0] || null,
+        selectedCuisines[0] || null,
+        page,
+      )
     }
-  }, [])
+  }, [
+    page,
+    fetchRecipes,
+    selectedIngredients,
+    selectedCategories,
+    selectedCuisines,
+  ])
 
   useEffect(() => {
     const fetchCuisines = async () => {
@@ -196,7 +214,7 @@ export default function SearchPage() {
         const options = ingredients.map((ingredient: Ingredient) => ({
           value: ingredient.strIngredient,
           label: ingredient.strIngredient,
-          image: `https://www.themealdb.com/images/ingredients/${ingredient.strIngredient}-Small.png`, // Add image URL
+          image: `https://www.themealdb.com/images/ingredients/${ingredient.strIngredient}-Small.png`,
         }))
         setIngredientOptions(options)
       }
@@ -204,52 +222,15 @@ export default function SearchPage() {
 
     fetchCuisines()
     fetchCategories()
-    fetchIngredientOptions() // Fetch ingredient options
+    fetchIngredientOptions()
   }, [ingredients])
 
-  useEffect(() => {
-    if (selectedIngredients.length > 0) {
-      setRecipes([]) // Reset recipes when filters change
-      fetchRecipes(
-        selectedIngredients,
-        selectedCategories[0] || null,
-        selectedCuisines[0] || null,
-        1, // Always start with page 1 on new search
-      )
-    } else {
-      setRecipes([]) // Reset recipes when switching to latest meals
-      fetchLatestMeals()
-    }
-  }, [
-    selectedIngredients,
-    selectedCategories,
-    selectedCuisines,
-    fetchRecipes,
-    fetchLatestMeals,
-  ])
-
-  useEffect(() => {
-    if (page > 1) {
-      fetchRecipes(
-        selectedIngredients,
-        selectedCategories[0] || null,
-        selectedCuisines[0] || null,
-        page,
-      )
-    }
-  }, [
-    page,
-    fetchRecipes,
-    selectedIngredients,
-    selectedCategories,
-    selectedCuisines,
-  ])
-
+  // Move conditional returns AFTER all hooks
   if (isLoading) return <div>Loading...</div>
   if (error) return <div>Error: {error.message}</div>
   if (!ingredients) return <div>No ingredients available</div>
 
-  // Custom component to display ingredient images in the dropdown (with image left of the label)
+  // Custom component to display ingredient images in the dropdown
   const Option = (props: any) => (
     <components.Option {...props}>
       <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -276,7 +257,27 @@ export default function SearchPage() {
             Select Cuisine and Add Your Ingredients
           </h2>
 
-          <div className="mb-4 flex justify-center space-x-4">
+          <div className="mb-4 flex flex-wrap justify-center space-x-4">
+            {/* Ingredients Selection with Search, Multi-select & Images */}
+            <div>
+              <h3 className="mb-2 text-xl font-bold text-white">
+                Select Ingredients
+              </h3>
+              <Select
+                options={ingredientOptions} // Use ingredient options for select
+                onChange={handleIngredientChange}
+                isClearable
+                isMulti // Enable multi-select
+                isSearchable // Enable searchable dropdown
+                placeholder="Search and select ingredients..."
+                className="w-64 text-black"
+                components={{ Option }} // Use custom Option component to display images
+                value={ingredientOptions.filter((option) =>
+                  selectedIngredients.includes(option.value),
+                )}
+              />
+            </div>
+
             {/* Cuisine Selection */}
             <div>
               <h3 className="mb-2 text-xl font-bold text-white">
@@ -287,7 +288,14 @@ export default function SearchPage() {
                 onChange={handleCuisineChange}
                 isClearable
                 placeholder="Select Cuisine..."
-                className="text-black"
+                className="w-64 text-black"
+                value={
+                  selectedCuisines.length > 0
+                    ? cuisines.find(
+                        (option) => option.value === selectedCuisines[0],
+                      )
+                    : null
+                }
               />
             </div>
 
@@ -301,101 +309,94 @@ export default function SearchPage() {
                 onChange={handleCategoryChange}
                 isClearable
                 placeholder="Select Category..."
-                className="text-black"
-              />
-            </div>
-
-            {/* Ingredients Selection with Search, Multi-select & Images */}
-            <div>
-              <h3 className="mb-2 text-xl font-bold text-white">
-                Select Ingredients
-              </h3>
-              <Select
-                options={ingredientOptions} // Use ingredient options for select
-                onChange={handleIngredientChange}
-                isClearable
-                isMulti // Enable multi-select
-                isSearchable // Enable searchable dropdown
-                placeholder="Search and select ingredients..."
-                className="text-black"
-                components={{ Option }} // Use custom Option component to display images
+                className="w-64 text-black"
+                value={
+                  selectedCategories.length > 0
+                    ? categories.find(
+                        (option) => option.value === selectedCategories[0],
+                      )
+                    : null
+                }
               />
             </div>
           </div>
 
-          {/* Display Recipes or Latest Meals */}
+          {/* Search Parameters and Status */}
+          {/* TODO: Remove in Production */}
+          <div className="mt-4 text-white">
+            <h3 className="mb-2 text-2xl font-bold">Search Parameters:</h3>
+            <p>
+              <strong>Ingredients:</strong>{' '}
+              {selectedIngredients.length > 0
+                ? selectedIngredients.join(', ')
+                : 'Any'}
+            </p>
+            <p>
+              <strong>Category:</strong> {selectedCategories[0] || 'Any'}
+            </p>
+            <p>
+              <strong>Cuisine:</strong> {selectedCuisines[0] || 'Any'}
+            </p>
+            <p>
+              <strong>Status:</strong>{' '}
+              {isFetchingRecipes
+                ? 'Loading...'
+                : `${recipes.length} recipe(s) found`}
+            </p>
+            {/* Clear Parameters Button */}
+            <div className="flex items-end">
+              <button
+                onClick={handleClearParameters}
+                className="mt-6 rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-600"
+              >
+                Clear Parameters
+              </button>
+            </div>
+          </div>
+
+          {/* Display Recipes */}
           <div className="mt-8">
-            {selectedIngredients.length > 0 ? (
-              recipes.length > 0 ? (
-                <div>
-                  <h3 className="mb-4 text-2xl font-bold text-white">
-                    Recipes Found:
-                  </h3>
-                  <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {recipes.map((recipe, index) => (
-                      <li
-                        key={recipe.idMeal}
-                        ref={
-                          index === recipes.length - 1
-                            ? lastRecipeElementRef
-                            : null
-                        }
-                        className="cursor-pointer rounded-lg bg-white p-4 shadow"
-                        onClick={() => navigate(`/recipe/${recipe.idMeal}`)}
-                      >
-                        <img
-                          src={recipe.strMealThumb}
-                          alt={recipe.strMeal}
-                          className="h-40 w-full rounded-md object-cover"
-                        />
-                        <p>
-                          {recipe.strCategory} - {recipe.strArea}
-                        </p>
-                        <h4 className="mt-2 text-xl font-semibold">
-                          {recipe.strMeal}
-                        </h4>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : (
-                <div className="text-white">
-                  No recipes found. Try different ingredients.
-                </div>
-              )
-            ) : latestMeals.length > 0 ? (
+            {recipes.length > 0 ? (
               <div>
-                <h3 className="mb-4 text-2xl font-bold text-white">
-                  Latest Meals:
-                </h3>
                 <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {latestMeals.map((meal) => (
+                  {recipes.map((recipe, index) => (
                     <li
-                      key={meal.idMeal}
+                      key={recipe.idMeal}
+                      ref={
+                        index === recipes.length - 1
+                          ? lastRecipeElementRef
+                          : null
+                      }
                       className="cursor-pointer rounded-lg bg-white p-4 shadow"
-                      onClick={() => navigate(`/recipe/${meal.idMeal}`)}
+                      onClick={() => navigate(`/recipe/${recipe.idMeal}`)}
                     >
                       <img
-                        src={meal.strMealThumb}
-                        alt={meal.strMeal}
+                        src={recipe.strMealThumb}
+                        alt={recipe.strMeal}
                         className="h-40 w-full rounded-md object-cover"
                       />
                       <p>
-                        {meal.strCategory} - {meal.strArea}
+                        {recipe.strCategory} - {recipe.strArea}
                       </p>
                       <h4 className="mt-2 text-xl font-semibold">
-                        {meal.strMeal}
+                        {recipe.strMeal}
                       </h4>
                     </li>
                   ))}
                 </ul>
               </div>
             ) : (
-              <div className="text-white">
-                No latest meals available at the moment.
+              !isFetchingRecipes && (
+                <div className="text-white">
+                  No recipes found. Try different filters.
+                </div>
+              )
+            )}
+            {isFetchingRecipes && (
+              <div className="mt-4 flex items-center justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-white"></div>
               </div>
             )}
-            {isFetchingRecipes && <div className="text-white">Loading...</div>}
           </div>
         </div>
       </div>
