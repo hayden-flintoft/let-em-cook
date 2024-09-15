@@ -47,24 +47,33 @@ export default function Header() {
           </Link>
         </nav>
 
-        {/* User Authentication Buttons */}
-        <div className="flex items-center">
+        <div className="flex items-center space-x-4">
           {!user ? (
             <button
               onClick={handleSignIn}
-              className="rounded-lg border-2 border-[#9E3700] bg-white px-4 py-2 text-[#9E3700]"
+              className="rounded-3xl border-2 border-[#9E3700] bg-white px-6 py-3 text-3xl font-extrabold text-[#9E3700] hover:bg-gray-100 focus:outline-none"
             >
               Sign In
             </button>
           ) : (
             <div className="flex items-center space-x-4">
-              <span className="text-[#9E3700]">Hello, {user.firstName}</span>
+              <span className="text-3xl font-extrabold text-[#9E3700]">
+                Hello, {user.firstName}
+              </span>
               <button
                 onClick={handleSignOut}
-                className="rounded-lg border-2 border-[#9E3700] bg-white px-4 py-2 text-[#9E3700]"
+                className="rounded-3xl border-2 border-[#9E3700] bg-white px-6 py-3 text-3xl font-extrabold text-[#9E3700] hover:bg-gray-100 focus:outline-none"
               >
                 Sign Out
               </button>
+              {/* Chef Icon wrapped in Link */}
+              <Link to="/userprofile" className="rounded-3xl border-2 border-[#9E3700] bg-white px-4 py-3">
+                <img
+                  src="/images/chef.png"
+                  alt="Chef Icon"
+                  className="h-10 w-10 object-cover rounded-full" 
+                />
+              </Link>
             </div>
           )}
         </div>

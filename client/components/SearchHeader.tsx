@@ -54,7 +54,7 @@ const SearchHeader: React.FC<SearchHeaderProps> = ({
   handleIngredientChange,
   handleCuisineChange,
   handleCategoryChange,
-  handleClearParameters,
+
 }) => {
   // Custom component to display ingredient images in the dropdown
   const Option = (props: any) => (

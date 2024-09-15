@@ -1,56 +1,114 @@
-import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { Heart } from 'lucide-react';
 
 export default function RecipePage() {
-  const { id } = useParams<{ id: string }>() // Recipe ID from URL
-  const [meal, setMeal] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const [orderNote, setOrderNote] = useState('') // Store current order note
-  const [comments, setComments] = useState<string[]>([]) // Store all comments
+  const { id } = useParams<{ id: string }>();
+  const [meal, setMeal] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [orderNote, setOrderNote] = useState('');
+  const [comments, setComments] = useState<string[]>([]);
+  const [liked, setLiked] = useState(false);
+  const [heartCount, setHeartCount] = useState(0);
 
   useEffect(() => {
     if (id) {
-      fetchMealById(id)
+      fetchMealById(id);
+      fetchLikeStatus(id);
+      fetchComments(id);
     }
-  }, [id])
+  }, [id]);
 
   const fetchMealById = async (mealId: string) => {
-    setLoading(true)
+    setLoading(true);
     try {
       const response = await fetch(
         `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${mealId}`,
-      )
-      const data = await response.json()
-      setMeal(data.meals[0])
+      );
+      const data = await response.json();
+      setMeal(data.meals[0]);
     } catch (error) {
-      console.error('Error fetching meal details:', error)
+      console.error('Error fetching meal details:', error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  const handleAddComment = () => {
-    if (orderNote.trim()) {
-      setComments([...comments, orderNote]) // Add current note to the list of comments
-      setOrderNote('') // Clear the textarea
+  const fetchLikeStatus = async (mealId: string) => {
+    try {
+      const response = await fetch(`/api/likes/${mealId}`);
+      const data = await response.json();
+      setLiked(data.isLiked);
+      setHeartCount(data.likeCount);
+    } catch (error) {
+      console.error('Error fetching like status:', error);
     }
-  }
+  };
+
+  const fetchComments = async (mealId: string) => {
+    try {
+      const response = await fetch(`/api/comments/${mealId}`);
+      const data = await response.json();
+      setComments(data.comments);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    }
+  };
+
+  const handleToggleLike = async () => {
+    try {
+      const response = await fetch(`/api/likes/${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isLiked: !liked }),
+      });
+      const data = await response.json();
+      setLiked(data.isLiked);
+      setHeartCount(data.likeCount);
+    } catch (error) {
+      console.error('Error toggling like:', error);
+    }
+  };
+
+  const handleAddComment = async () => {
+    if (orderNote.trim()) {
+      try {
+        const response = await fetch(`/api/comments/${id}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ comment: orderNote }),
+        });
+        const data = await response.json();
+        setComments(data.comments);
+        setOrderNote('');
+      } catch (error) {
+        console.error('Error adding comment:', error);
+      }
+    }
+  };
 
   const handleClearComment = () => {
-    setOrderNote('') // Clear the textarea
-  }
+    setOrderNote('');
+  };
 
-  if (loading) return <div>Loading...</div>
+  if (loading) return <div>Loading...</div>;
 
-  if (!meal) return <div>Recipe not found.</div>
+  if (!meal) return <div>Recipe not found.</div>;
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="shadow-neumorph hover:shadow-neumorph-pressed w-[60%] max-w-[1000px] p-4 shadow-lg">
+    <div className="flex min-h-screen items-center justify-center ">
+      <div className="relative shadow-neumorph hover:shadow-neumorph-pressed w-[60%] max-w-[1000px] p-20 rounded-3xl shadow-lg">
+        <button
+          onClick={handleToggleLike}
+          className={`absolute top-4 right-4 p-2 rounded-full ${liked ? 'text-red-500' : 'text-gray-500'} hover:text-red-700 transition-colors`}
+        >
+          <Heart className="w-12 h-12" />
+        </button>
         <div>
           <h2 className="text-3xl font-extrabold tracking-tight text-[#9E3700]">
             {meal.strMeal}
           </h2>
+          <br />
         </div>
         <div>
           <form>
@@ -59,7 +117,7 @@ export default function RecipePage() {
                 <img
                   src={meal.strMealThumb}
                   alt="food"
-                  className="mx-auto w-[60%] object-cover"
+                  className="mx-auto w-[60%] object-cover rounded-3xl"
                 />
                 <br />
                 <p className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]">
@@ -74,10 +132,9 @@ export default function RecipePage() {
                   Ingredients!
                 </p>
                 <div className="container mx-auto p-4">
-                  {/* Map over ingredients */}
                   {Array.from({ length: 20 }, (_, index) => {
-                    const ingredient = meal[`strIngredient${index + 1}`]
-                    const measure = meal[`strMeasure${index + 1}`]
+                    const ingredient = meal[`strIngredient${index + 1}`];
+                    const measure = meal[`strMeasure${index + 1}`];
 
                     if (ingredient && ingredient.trim() !== '') {
                       return (
@@ -90,9 +147,9 @@ export default function RecipePage() {
                             {measure} {ingredient}
                           </p>
                         </div>
-                      )
+                      );
                     }
-                    return null
+                    return null;
                   })}
                 </div>
                 <p className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]">
@@ -112,8 +169,8 @@ export default function RecipePage() {
                     ></iframe>
                   )}
                 </div>
-
-                {/* Order notes box */}
+                <br />
+                <br />
                 <div className="mt-6">
                   <label htmlFor="OrderNotes" className="sr-only">
                     Order notes
@@ -122,8 +179,8 @@ export default function RecipePage() {
                     <textarea
                       id="OrderNotes"
                       value={orderNote}
-                      onChange={(e) => setOrderNote(e.target.value)} // Capture textarea input
-                      className="w-full resize-none border-x-0 border-t-0 border-gray-200 px-0 align-top sm:text-sm"
+                      onChange={(e) => setOrderNote(e.target.value)}
+                      className="w-full resize-none rounded-3xl border-x-0 border-t-0 border-[#9E3700] px-3 py-2 text-center align-middle sm:text-sm"
                       rows="4"
                       placeholder="Enter any additional order notes..."
                     ></textarea>
@@ -131,7 +188,7 @@ export default function RecipePage() {
                     <div className="flex items-center justify-end gap-2 py-3">
                       <button
                         type="button"
-                        onClick={handleClearComment} // Clear textarea
+                        onClick={handleClearComment}
                         className="rounded bg-gray-200 px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-gray-600"
                       >
                         Clear
@@ -139,8 +196,8 @@ export default function RecipePage() {
 
                       <button
                         type="button"
-                        onClick={handleAddComment} // Add comment
-                        className="rounded bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700"
+                        onClick={handleAddComment}
+                        className="rounded bg-[#9E3700] px-3 py-1.5 text-sm font-medium text-white"
                       >
                         Add
                       </button>
@@ -148,7 +205,6 @@ export default function RecipePage() {
                   </div>
                 </div>
 
-                {/* Display comments */}
                 <div className="mt-6">
                   <h3 className="text-xl font-bold text-[#9E3700]">
                     Comments:
@@ -167,5 +223,5 @@ export default function RecipePage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
