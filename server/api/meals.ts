@@ -6,6 +6,64 @@ import 'dotenv/config' // Import the enviroment variables using dotenv.
 
 const router = express.Router()
 
+router.get('/alphabetical', async (req: Request, res: Response) => {
+  const {
+    letter = 'A',
+    page = 1,
+    limit = 10,
+    category,
+    cuisine,
+    ingredients,
+  } = req.query
+  const mealsPerPage = parseInt(limit as string) || 10
+  const startIndex = (parseInt(page as string) - 1) * mealsPerPage
+  const endIndex = startIndex + mealsPerPage
+
+  try {
+    // Fetch all recipes starting with a particular letter
+    const response = await request.get(
+      `https://www.themealdb.com/api/json/v2/${process.env.MEALDB_API_KEY}/search.php?f=${letter}`,
+    )
+    let meals = response.body.meals || []
+
+    // Filter by category
+    if (category) {
+      meals = meals.filter((meal: any) => meal.strCategory === category)
+    }
+
+    // Filter by cuisine
+    if (cuisine) {
+      meals = meals.filter((meal: any) => meal.strArea === cuisine)
+    }
+
+    // Filter by ingredients
+    if (ingredients) {
+      const ingredientList = (ingredients as string)
+        .split(',')
+        .map((i) => i.trim().toLowerCase())
+      meals = meals.filter((meal: any) => {
+        const mealIngredients = []
+        for (let i = 1; i <= 20; i++) {
+          const ingredient = meal[`strIngredient${i}`]
+          if (ingredient) mealIngredients.push(ingredient.toLowerCase())
+        }
+        return ingredientList.every((i) => mealIngredients.includes(i))
+      })
+    }
+
+    const totalFilteredMeals = meals.length
+    const paginatedMeals = meals.slice(startIndex, endIndex)
+
+    res.json({
+      meals: paginatedMeals,
+      totalMeals: totalFilteredMeals, // Send total filtered count back
+      hasMore: endIndex < totalFilteredMeals,
+    })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
 router.get('/search', async (req: Request, res: Response) => {
   try {
     const ingredients = req.query.ingredients as string | undefined // comma-separated
