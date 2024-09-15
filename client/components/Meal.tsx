@@ -1,59 +1,59 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Heart } from 'lucide-react';
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { Heart } from 'lucide-react'
 
 export default function RecipePage() {
-  const { id } = useParams<{ id: string }>();
-  const [meal, setMeal] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [orderNote, setOrderNote] = useState('');
-  const [comments, setComments] = useState<string[]>([]);
-  const [liked, setLiked] = useState(false);
-  const [heartCount, setHeartCount] = useState(0);
+  const { id } = useParams<{ id: string }>()
+  const [meal, setMeal] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [orderNote, setOrderNote] = useState('')
+  const [comments, setComments] = useState<string[]>([])
+  const [liked, setLiked] = useState(false)
+  const [heartCount, setHeartCount] = useState(0)
 
   useEffect(() => {
     if (id) {
-      fetchMealById(id);
-      fetchLikeStatus(id);
-      fetchComments(id);
+      fetchMealById(id)
+      fetchLikeStatus(id)
+      fetchComments(id)
     }
-  }, [id]);
+  }, [id])
 
   const fetchMealById = async (mealId: string) => {
-    setLoading(true);
+    setLoading(true)
     try {
       const response = await fetch(
         `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${mealId}`,
-      );
-      const data = await response.json();
-      setMeal(data.meals[0]);
+      )
+      const data = await response.json()
+      setMeal(data.meals[0])
     } catch (error) {
-      console.error('Error fetching meal details:', error);
+      console.error('Error fetching meal details:', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const fetchLikeStatus = async (mealId: string) => {
     try {
-      const response = await fetch(`/api/likes/${mealId}`);
-      const data = await response.json();
-      setLiked(data.isLiked);
-      setHeartCount(data.likeCount);
+      const response = await fetch(`/api/likes/${mealId}`)
+      const data = await response.json()
+      setLiked(data.isLiked)
+      setHeartCount(data.likeCount)
     } catch (error) {
-      console.error('Error fetching like status:', error);
+      console.error('Error fetching like status:', error)
     }
-  };
+  }
 
   const fetchComments = async (mealId: string) => {
     try {
-      const response = await fetch(`/api/comments/${mealId}`);
-      const data = await response.json();
-      setComments(data.comments);
+      const response = await fetch(`/api/comments/${mealId}`)
+      const data = await response.json()
+      setComments(data.comments)
     } catch (error) {
-      console.error('Error fetching comments:', error);
+      console.error('Error fetching comments:', error)
     }
-  };
+  }
 
   const handleToggleLike = async () => {
     try {
@@ -61,14 +61,14 @@ export default function RecipePage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isLiked: !liked }),
-      });
-      const data = await response.json();
-      setLiked(data.isLiked);
-      setHeartCount(data.likeCount);
+      })
+      const data = await response.json()
+      setLiked(data.isLiked)
+      setHeartCount(data.likeCount)
     } catch (error) {
-      console.error('Error toggling like:', error);
+      console.error('Error toggling like:', error)
     }
-  };
+  }
 
   const handleAddComment = async () => {
     if (orderNote.trim()) {
@@ -77,32 +77,32 @@ export default function RecipePage() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ comment: orderNote }),
-        });
-        const data = await response.json();
-        setComments(data.comments);
-        setOrderNote('');
+        })
+        const data = await response.json()
+        setComments(data.comments)
+        setOrderNote('')
       } catch (error) {
-        console.error('Error adding comment:', error);
+        console.error('Error adding comment:', error)
       }
     }
-  };
+  }
 
   const handleClearComment = () => {
-    setOrderNote('');
-  };
+    setOrderNote('')
+  }
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>Loading...</div>
 
-  if (!meal) return <div>Recipe not found.</div>;
+  if (!meal) return <div>Recipe not found.</div>
 
   return (
-    <div className="flex min-h-screen items-center justify-center ">
-      <div className="relative shadow-neumorph hover:shadow-neumorph-pressed w-[60%] max-w-[1000px] p-20 rounded-3xl shadow-lg">
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="shadow-neumorph hover:shadow-neumorph-pressed relative w-[60%] max-w-[1000px] rounded-3xl p-20 shadow-lg">
         <button
           onClick={handleToggleLike}
-          className={`absolute top-4 right-4 p-2 rounded-full ${liked ? 'text-red-500' : 'text-gray-500'} hover:text-red-700 transition-colors`}
+          className={`absolute right-4 top-4 rounded-full p-2 ${liked ? 'text-red-500' : 'text-gray-500'} transition-colors hover:text-red-700`}
         >
-          <Heart className="w-12 h-12" />
+          <Heart className="h-12 w-12" />
         </button>
         <div>
           <h2 className="text-3xl font-extrabold tracking-tight text-[#9E3700]">
@@ -117,7 +117,7 @@ export default function RecipePage() {
                 <img
                   src={meal.strMealThumb}
                   alt="food"
-                  className="mx-auto w-[60%] object-cover rounded-3xl"
+                  className="mx-auto w-[60%] rounded-3xl object-cover"
                 />
                 <br />
                 <p className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]">
@@ -133,8 +133,8 @@ export default function RecipePage() {
                 </p>
                 <div className="container mx-auto p-4">
                   {Array.from({ length: 20 }, (_, index) => {
-                    const ingredient = meal[`strIngredient${index + 1}`];
-                    const measure = meal[`strMeasure${index + 1}`];
+                    const ingredient = meal[`strIngredient${index + 1}`]
+                    const measure = meal[`strMeasure${index + 1}`]
 
                     if (ingredient && ingredient.trim() !== '') {
                       return (
@@ -147,9 +147,9 @@ export default function RecipePage() {
                             {measure} {ingredient}
                           </p>
                         </div>
-                      );
+                      )
                     }
-                    return null;
+                    return null
                   })}
                 </div>
                 <p className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]">
@@ -223,5 +223,5 @@ export default function RecipePage() {
         </div>
       </div>
     </div>
-  );
+  )
 }
