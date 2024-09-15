@@ -4,6 +4,7 @@ import { getCuisines } from '@/api/cuisines'
 import { getCategories } from '@/api/categories'
 import Select, { components } from 'react-select'
 import useIngredients from '@/hooks/use-findrecipe'
+import RecipeListItem from '@/components/RecipeListItem'
 
 interface Ingredient {
   idIngredient: string
@@ -16,6 +17,8 @@ interface Recipe {
   strMealThumb: string
   strCategory: string
   strArea: string
+  strInstructions: string
+  [key: string]: any // To allow dynamic keys for ingredients and measures
 }
 
 interface CuisineOption {
@@ -363,24 +366,12 @@ export default function SearchPage() {
                     <li
                       key={recipe.idMeal}
                       ref={
-                        index === recipes.length - 1
+                        index === recipes.length - 1 && hasMore
                           ? lastRecipeElementRef
                           : null
                       }
-                      className="cursor-pointer rounded-lg bg-white p-4 shadow"
-                      onClick={() => navigate(`/recipe/${recipe.idMeal}`)}
                     >
-                      <img
-                        src={recipe.strMealThumb}
-                        alt={recipe.strMeal}
-                        className="h-40 w-full rounded-md object-cover"
-                      />
-                      <p>
-                        {recipe.strCategory} - {recipe.strArea}
-                      </p>
-                      <h4 className="mt-2 text-xl font-semibold">
-                        {recipe.strMeal}
-                      </h4>
+                      <RecipeListItem recipe={recipe} layout="card" />
                     </li>
                   ))}
                 </ul>
