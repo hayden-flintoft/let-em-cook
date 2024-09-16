@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useLocation } from 'react-router-dom' // Import to get the search query
-import RecipeListItem from '@/components/RecipeListItem'
 import SearchHeader from '@/components/SearchHeader'
 import { getCuisines } from '@/api/cuisines'
 import { getCategories } from '@/api/categories'
@@ -10,6 +9,8 @@ import { Ingredient } from '../../models/ingredients'
 import { childIngredientsMap } from '../../models/mapping'
 import LoadingSpinner from '@/components/ui/loadingspinner'
 import ScrollToTopFAB from '@/components/ScrollToTopFAB' // Import the ScrollToTopFAB
+import RecipesList from '@/components/RecipesList' // Import the new RecipesList
+import FiltersDebugInfo from '@/components/FiltersDebugInfo' // Import the new FiltersDebugInfo
 
 const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
 
@@ -249,50 +250,25 @@ export default function RecipesByLetterPage() {
 
       <h2 className="mb-8 text-4xl font-bold text-black">Recipes</h2>
 
-      {/* Debug Information Section */}
-      <div className="mb-4 rounded-lg bg-gray-100 p-4 shadow-md">
-        <h3 className="text-xl font-semibold">Debug Information</h3>
-        <p>
-          <strong>Search Query:</strong> {searchQuery || 'None'}
-        </p>
-        <p>
-          <strong>Selected Ingredients:</strong>{' '}
-          {selectedIngredients.length > 0
-            ? selectedIngredients.join(', ')
-            : 'None'}
-        </p>
-        <p>
-          <strong>Selected Cuisines:</strong>{' '}
-          {selectedCuisines.length > 0 ? selectedCuisines.join(', ') : 'None'}
-        </p>
-        <p>
-          <strong>Selected Categories:</strong>{' '}
-          {selectedCategories.length > 0
-            ? selectedCategories.join(', ')
-            : 'None'}
-        </p>
-      </div>
+      <FiltersDebugInfo
+        searchQuery={searchQuery}
+        selectedIngredients={selectedIngredients}
+        selectedCuisines={selectedCuisines}
+        selectedCategories={selectedCategories}
+      />
 
       {noRecipesFound && !resultsFound ? (
         <div className="text-center text-xl text-red-500">
           No recipes found with the current filters.
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filteredRecipes.map((recipe, index) => (
-            <div
-              key={recipe.idMeal}
-              ref={
-                index === filteredRecipes.length - 1
-                  ? lastRecipeElementRef
-                  : null
-              }
-            >
-              <RecipeListItem recipe={recipe} layout="card" />
-            </div>
-          ))}
-        </div>
+        <RecipesList
+          recipes={filteredRecipes}
+          lastRecipeElementRef={lastRecipeElementRef}
+          isFetching={isFetching}
+        />
       )}
+
       {isFetching && <LoadingSpinner size={48} color="text-orange-500" />}
 
       {/* Scroll to Top Button */}

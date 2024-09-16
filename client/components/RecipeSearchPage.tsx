@@ -1,5 +1,3 @@
-// Client-side code (React components)
-
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -27,7 +25,7 @@ const SearchHeader: React.FC<{
   setFilters: React.Dispatch<React.SetStateAction<SearchFilters>>
 }> = ({ filters, setFilters }) => {
   const handleSearchTermChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFilters(prev => ({ ...prev, searchTerm: e.target.value }))
+    setFilters((prev) => ({ ...prev, searchTerm: e.target.value }))
   }
 
   return (
@@ -97,15 +95,15 @@ const SearchPage: React.FC = () => {
       if (isFetching) return
       if (observer.current) observer.current.disconnect()
 
-      observer.current = new IntersectionObserver(entries => {
+      observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMore) {
-          setPage(prevPage => prevPage + 1)
+          setPage((prevPage) => prevPage + 1)
         }
       })
 
       if (node) observer.current.observe(node)
     },
-    [isFetching, hasMore]
+    [isFetching, hasMore],
   )
 
   const fetchRecipes = async () => {
@@ -121,7 +119,7 @@ const SearchPage: React.FC = () => {
       }
       const data = await response.json()
       const fetchedRecipes = data.recipes || []
-      setRecipes(prevRecipes => [...prevRecipes, ...fetchedRecipes])
+      setRecipes((prevRecipes) => [...prevRecipes, ...fetchedRecipes])
       setHasMore(fetchedRecipes.length > 0)
     } catch (error) {
       console.error('Error fetching recipes:', error)
@@ -138,7 +136,10 @@ const SearchPage: React.FC = () => {
     <div className="container mx-auto p-8">
       <h1 className="mb-8 text-4xl font-bold">Recipe Search</h1>
       <SearchHeader filters={filters} setFilters={setFilters} />
-      <SearchResultList recipes={recipes} lastRecipeElementRef={lastRecipeElementRef} />
+      <SearchResultList
+        recipes={recipes}
+        lastRecipeElementRef={lastRecipeElementRef}
+      />
       <SearchFooter isFetching={isFetching} />
     </div>
   )
@@ -156,13 +157,21 @@ const prisma = new PrismaClient()
 
 router.get('/api/v1/recipes/search', async (req, res) => {
   try {
-    const { page = 1, searchTerm, ingredients, categories, cuisines } = req.query
+    const {
+      page = 1,
+      searchTerm,
+      ingredients,
+      categories,
+      cuisines,
+    } = req.query
     const pageSize = 20
     const skip = (Number(page) - 1) * pageSize
 
     const where = {
       AND: [
-        searchTerm ? { strMeal: { contains: searchTerm as string, mode: 'insensitive' } } : {},
+        searchTerm
+          ? { strMeal: { contains: searchTerm as string, mode: 'insensitive' } }
+          : {},
         ingredients ? { strIngredient1: { in: ingredients as string[] } } : {},
         categories ? { strCategory: { in: categories as string[] } } : {},
         cuisines ? { strArea: { in: cuisines as string[] } } : {},
