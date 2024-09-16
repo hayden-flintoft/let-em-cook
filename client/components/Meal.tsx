@@ -122,7 +122,7 @@ export default function RecipePage() {
                   if (ingredient && ingredient.trim() !== '') {
                     return (
                       <div key={index} className="flex items-center space-x-2">
-                        <input type="checkbox" className="mr-2" />
+                        <input type="checkbox" className="mr-2 " />
                         <p>
                           {measure} {ingredient}
                         </p>
@@ -153,6 +153,7 @@ export default function RecipePage() {
               <br />
               {/* Pass setComments and comments to AddComment */}
               <AddComment setComments={setComments} comments={comments} />
+              <br></br>
               <div className="mt-6">
                 <div className="overflow-hidden">
                   <h3 className="text-xl font-bold text-[#9E3700]">Comments:</h3>
