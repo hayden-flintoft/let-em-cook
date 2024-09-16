@@ -45,17 +45,17 @@ export default function Home() {
   }
 
   return (
-    <div>
+    <div className="px-4 md:px-8 lg:px-16">
       {/* Carousel Section */}
-      <div className="shadow-neumorph hover:shadow-neumorph-pressed relative mb-8 h-[500px] w-full overflow-hidden rounded-3xl">
+      <div className="shadow-neumorph hover:shadow-neumorph-pressed relative mb-8 h-[250px] w-full overflow-hidden rounded-3xl md:h-[400px] lg:h-[500px]">
         <img
           src="/images/Meals-by-Chefkraft.png"
           alt="Various delicious meals"
           className="h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent">
-          <div className="absolute bottom-0 left-0 right-0 p-8">
-            <h2 className="text-4xl font-bold text-white md:text-5xl lg:text-6xl">
+          <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8 lg:p-12">
+            <h2 className="text-xl font-bold text-white md:text-4xl lg:text-6xl">
               &apos;I have nothing to eat&apos;,
               <br />
               <span className="text-[#FFB649]">
@@ -68,7 +68,9 @@ export default function Home() {
 
       {/* Carousel Component */}
       <section>
-        <h3 className="mb-4 text-2xl font-semibold">Categories & Cuisines</h3>
+        <h3 className="mb-4 text-lg font-semibold md:text-2xl">
+          Categories & Cuisines
+        </h3>
         <Carousel
           options={allOptions}
           selectedOption={selectedOption}

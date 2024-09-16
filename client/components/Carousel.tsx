@@ -37,28 +37,27 @@ export default function Carousel({
   return (
     <div
       ref={carouselRef}
-      className="no-scrollbar flex overflow-x-auto whitespace-nowrap"
+      className="no-scrollbar flex overflow-x-auto whitespace-nowrap px-2 md:px-4"
     >
       {options.map((option, index) => (
         <div
           key={`${option}-${index}`}
-          className={`mx-4 flex min-w-[150px] cursor-pointer flex-col items-center ${
+          className={`mx-2 flex min-w-[100px] cursor-pointer flex-col items-center md:mx-4 md:min-w-[150px] ${
             option === selectedOption ? '' : ''
           }`}
           onClick={() =>
             onOptionSelect(option, isCuisine(option) ? 'cuisine' : 'category')
           }
         >
-          {/* Convert the option to lowercase when constructing the image source */}
           <img
-            src={`images/${option.toLowerCase()}.png`}
+            src={`images/${option.toLowerCase()}.svg`}
             alt={option}
-            className={`mb-2 h-16 w-16 object-cover ${
+            className={`mb-2 h-12 w-12 object-cover md:h-16 md:w-16 ${
               option === selectedOption ? '' : ''
             }`}
           />
           <span
-            className={`text-sm ${
+            className={`text-sm md:text-base ${
               option === selectedOption ? 'font-bold text-yellow-500' : ''
             }`}
           >
