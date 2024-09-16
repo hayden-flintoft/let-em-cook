@@ -1,9 +1,12 @@
 import { useUser, useClerk } from '@clerk/clerk-react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 
 export default function Header() {
   const { user } = useUser()
   const { signOut, openSignIn } = useClerk()
+  const [searchQuery, setSearchQuery] = useState('')
+  const navigate = useNavigate()
 
   const handleSignIn = () => {
     openSignIn() // Opens the sign-in modal provided by Clerk
@@ -11,6 +14,13 @@ export default function Header() {
 
   const handleSignOut = () => {
     signOut() // Signs the user out
+  }
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      navigate(`/search?query=${searchQuery}`) // Redirect to /search with the query
+    }
   }
 
   return (
@@ -21,9 +31,10 @@ export default function Header() {
           <img
             src="/images/Letemcook.png"
             alt="Logo"
-            className="h-full object-contain" // Ensure the logo fits within the header height
+            className="h-full object-contain"
           />
         </Link>
+
         {/* Navigation Links */}
         <nav className="space-x-4">
           <Link
@@ -33,6 +44,23 @@ export default function Header() {
             All Recipes
           </Link>
         </nav>
+
+        {/* Search Bar */}
+        <form onSubmit={handleSearch} className="mr-4">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search recipes..."
+            className="rounded-full border border-[#9E3700] px-4 py-2 text-[#9E3700]"
+          />
+          <button
+            type="submit"
+            className="ml-2 rounded-full bg-[#9E3700] px-4 py-2 text-white"
+          >
+            Search
+          </button>
+        </form>
 
         <div className="flex items-center space-x-4">
           {!user ? (
@@ -53,7 +81,6 @@ export default function Header() {
               >
                 Sign Out
               </button>
-              {/* Chef Icon wrapped in Link */}
               <Link
                 to="/userprofile"
                 className="rounded-3xl border-2 border-[#9E3700] bg-white px-4 py-3"
