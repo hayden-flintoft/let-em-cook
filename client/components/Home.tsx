@@ -4,7 +4,6 @@ import { carouselCategories, carouselCuisines } from '../../models/carouselData'
 import { useFetchRecipes } from '@/hooks/useFetchRecipes'
 import Carousel from './Carousel'
 import RecipesList from './RecipesListBrief'
-import RandomRecipeButton from './RandomRecipeButton'
 
 export default function Home() {
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
@@ -75,8 +74,8 @@ export default function Home() {
           selectedOption={selectedOption}
           onOptionSelect={handleOptionSelect}
           isCuisine={(option) => carouselCuisines.includes(option)}
+          onRandomRecipeClick={fetchRandomRecipe} // Pass the function to Carousel
         />
-        <RandomRecipeButton onClick={fetchRandomRecipe} />
       </section>
 
       {/* Recipes List Component */}

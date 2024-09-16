@@ -1,10 +1,12 @@
 import { useEffect, useRef } from 'react'
+import RandomRecipeButton from './RandomRecipeButton' // Import RandomRecipeButton
 
 interface CarouselProps {
   options: string[]
   selectedOption: string | null
   onOptionSelect: (option: string, type: 'category' | 'cuisine') => void
   isCuisine: (option: string) => boolean
+  onRandomRecipeClick: () => void // Add prop to handle random recipe button click
 }
 
 export default function Carousel({
@@ -12,6 +14,7 @@ export default function Carousel({
   selectedOption,
   onOptionSelect,
   isCuisine,
+  onRandomRecipeClick,
 }: CarouselProps) {
   const carouselRef = useRef<HTMLDivElement>(null)
 
@@ -40,7 +43,7 @@ export default function Carousel({
         <div
           key={`${option}-${index}`}
           className={`mx-4 flex min-w-[150px] cursor-pointer flex-col items-center ${
-            option === selectedOption ? 'border-b-4 border-yellow-500' : ''
+            option === selectedOption ? '' : ''
           }`}
           onClick={() =>
             onOptionSelect(option, isCuisine(option) ? 'cuisine' : 'category')
@@ -50,15 +53,22 @@ export default function Carousel({
           <img
             src={`images/${option.toLowerCase()}.png`}
             alt={option}
-            className={`mb-2 h-16 w-16 rounded-full object-cover ${option === selectedOption ? 'ring-2 ring-yellow-500' : ''}`}
+            className={`mb-2 h-16 w-16 object-cover ${
+              option === selectedOption ? '' : ''
+            }`}
           />
           <span
-            className={`text-sm ${option === selectedOption ? 'font-bold text-yellow-500' : ''}`}
+            className={`text-sm ${
+              option === selectedOption ? 'font-bold text-yellow-500' : ''
+            }`}
           >
             {option}
           </span>
         </div>
       ))}
+
+      {/* Random Recipe Button added to the end of the carousel */}
+      <RandomRecipeButton onClick={onRandomRecipeClick} />
     </div>
   )
 }
