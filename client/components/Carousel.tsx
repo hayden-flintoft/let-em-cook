@@ -46,8 +46,9 @@ export default function Carousel({
             onOptionSelect(option, isCuisine(option) ? 'cuisine' : 'category')
           }
         >
+          {/* Convert the option to lowercase when constructing the image source */}
           <img
-            src={`images/${option}.png`}
+            src={`images/${option.toLowerCase()}.png`}
             alt={option}
             className={`mb-2 h-16 w-16 rounded-full object-cover ${option === selectedOption ? 'ring-2 ring-yellow-500' : ''}`}
           />
