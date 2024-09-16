@@ -5,7 +5,7 @@ export default function User(){
   const {user} = useUser()
   const { openUserProfile } = useClerk()
   const handleOpenUserProfile = () => {
-    openUserProfile() // Opens Clerk's user profile modal
+    openUserProfile() // Opens Clerk's user profile model
   }
 
   return (

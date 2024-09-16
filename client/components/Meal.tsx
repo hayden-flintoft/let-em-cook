@@ -1,17 +1,20 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Heart } from 'lucide-react'
+import useAddComment from '@/hooks/use-comment'
+import AddComment from './CommentForm'
 
 export default function RecipePage() {
   const { id } = useParams<{ id: string }>()
   const [meal, setMeal] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const [orderNote, setOrderNote] = useState('')
   const [comments, setComments] = useState<string[]>([])
   const [liked, setLiked] = useState(false)
   const [heartCount, setHeartCount] = useState(0)
-  const [showVideo, setShowVideo] = useState(true) // New state for handling video visibility
 
+  // Initialize the hook here
+  const addCommentMutation = useAddComment()
+          
   useEffect(() => {
     if (id) {
       fetchMealById(id)
@@ -27,11 +30,7 @@ export default function RecipePage() {
         `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${mealId}`,
       )
       const data = await response.json()
-      const mealData = data.meals[0]
-      setMeal(mealData)
-      if (mealData.strYoutube) {
-        checkVideoAvailability(mealData.strYoutube.split('=')[1]) // Extract YouTube video ID
-      }
+      setMeal(data.meals[0])
     } catch (error) {
       console.error('Error fetching meal details:', error)
     } finally {
@@ -74,6 +73,8 @@ export default function RecipePage() {
       console.error('Error toggling like:', error)
     }
   }
+
+  // Updated handleAddComment to use the mutation function from useAddComment
 
   const handleAddComment = async () => {
     if (orderNote.trim()) {
@@ -131,6 +132,29 @@ export default function RecipePage() {
           <br />
         </div>
         <div>
+          <div className="grid w-full items-center gap-4">
+            <div className="flex flex-col space-y-1.5">
+              <img
+                src={meal.strMealThumb}
+                alt="food"
+                className="mx-auto w-[60%] rounded-3xl object-cover"
+              />
+              <br />
+              <p className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]">
+                Step by step!
+              </p>
+              <br />
+              <p className="text-l scroll-m-20 font-extrabold tracking-tight text-[#9E3700]">
+                {meal.strInstructions}
+              </p>
+              <br />
+              <p className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]">
+                Ingredients!
+              </p>
+              <div className="container mx-auto p-4">
+                {Array.from({ length: 20 }, (_, index) => {
+                  const ingredient = meal[`strIngredient${index + 1}`]
+                  const measure = meal[`strMeasure${index + 1}`]
           <form>
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
@@ -233,6 +257,41 @@ export default function RecipePage() {
                   </div>
                 </div>
 
+                  if (ingredient && ingredient.trim() !== '') {
+                    return (
+                      <div key={index} className="flex items-center space-x-2">
+                        <input type="checkbox" className="mr-2" />
+                        <p>
+                          {measure} {ingredient}
+                        </p>
+                      </div>
+                    )
+                  }
+                  return null
+                })}
+              </div>
+              <p className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]">
+                Watch how to make it
+              </p>
+              <br />
+              <div className="flex justify-center">
+                {meal.strYoutube && (
+                  <iframe
+                    width="560"
+                    height="315"
+                    src={`https://www.youtube.com/embed/${meal.strYoutube.split('=')[1]}`}
+                    title="YouTube video player"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-[60%] rounded-lg"
+                  ></iframe>
+                )}
+              </div>
+              <br />
+              <br />
+              <AddComment />
+              <div className="mt-6">
+                <div className="overflow-hidden"></div>
                 <div className="mt-6">
                   <h3 className="text-xl font-bold text-[#9E3700]">
                     Comments:
@@ -247,7 +306,7 @@ export default function RecipePage() {
                 </div>
               </div>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>
