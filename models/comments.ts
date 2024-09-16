@@ -1,6 +1,7 @@
 export interface CommentData {
-  clerkId: string
-  username: string
-  recipeId: number
-  comment: string
+    clerkId: string | undefined;
+    username: string | null | undefined;
+    recipeId: number;
+    comment: string;
 }
+

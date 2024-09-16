@@ -1,7 +1,7 @@
 import { CommentData } from 'models/comments'
 import request from 'superagent'
 
-const baseUrl = '/api/v1/comments/recipe'
+const baseUrl = '/api/v1/comments/recipes'
 
 export async function getComment(id: number) {
   const res = await request.get(`${baseUrl}/${id}`)

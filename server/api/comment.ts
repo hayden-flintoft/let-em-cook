@@ -15,11 +15,12 @@ router.get('/recipes/:id', async (req, res) => {
   }
 })
 
-router.post('/recipes/', async (req, res) => {
+router.post('/recipes', async (req, res) => {
   const addComment = req.body
+  console.log(addComment)
   try {
-    const comment = await db.addCommentByRecipeId(addComment)
-    res.json(comment)
+    await db.addCommentByRecipeId(addComment)
+    res.sendStatus(202)
   } catch {
     res.sendStatus(500)
   }
