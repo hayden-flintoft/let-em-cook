@@ -1,9 +1,9 @@
 import useAddComment from '@/hooks/use-comment'
-import { useClerk, useUser } from '@clerk/clerk-react'
+import { useUser } from '@clerk/clerk-react'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-export default function AddComment() {
+export default function AddComment({ setComments, comments }) {
   const [orderNote, setOrderNote] = useState('')
 
   const { user } = useUser()
@@ -12,7 +12,6 @@ export default function AddComment() {
   const handleChange = (e) => {
     const comment = e.target.value
     setOrderNote(comment)
-    console.log(orderNote)
   }
 
   const addMutation = useAddComment()
@@ -26,7 +25,8 @@ export default function AddComment() {
     }
     await addMutation.mutate(commentDataObj)
     setOrderNote('')
-    console.log('done')
+    // Update comments in the parent component
+    setComments([...comments, commentDataObj.comment])
   }
 
   return (
@@ -38,7 +38,7 @@ export default function AddComment() {
         onChange={handleChange}
         className="w-full resize-none rounded-3xl border-x-0 border-t-0 border-[#9E3700] px-3 py-2 text-center align-middle sm:text-sm"
         rows={4}
-        placeholder="Enter any additional order notes..."
+        placeholder="Enter your comment..."
       ></textarea>
       <button className="rounded bg-[#9E3700] px-3 py-1.5 text-sm font-medium text-white">
         Add
