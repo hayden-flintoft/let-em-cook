@@ -20,7 +20,8 @@ router.post('/recipes', async (req, res) => {
   try {
     await db.addCommentByRecipeId(addComment)
     res.sendStatus(202)
-  } catch {
+  } catch (error) {
+    console.error(error.message)
     res.sendStatus(500)
   }
 })
