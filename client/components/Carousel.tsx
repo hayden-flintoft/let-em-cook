@@ -26,7 +26,7 @@ export default function Carousel({
           carouselRef.current.scrollLeft = 0 // Reset scroll to the beginning
         }
       }
-    }, 1) // Speed of the scroll
+    }, 20) // Speed of the scroll
 
     return () => clearInterval(scrollInterval) // Clean up the interval
   }, [])
