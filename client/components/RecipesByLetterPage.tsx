@@ -1,64 +1,41 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { useLocation } from 'react-router-dom' // Import to get the search query
 import RecipeListItem from '@/components/RecipeListItem'
 import SearchHeader from '@/components/SearchHeader'
 import { getCuisines } from '@/api/cuisines'
 import { getCategories } from '@/api/categories'
 import useIngredients from '@/hooks/use-findrecipe'
-import { Ingredient } from 'models/ingredients'
+import { MealListItem } from '../../models/meals'
+import { Ingredient } from '../../models/ingredients'
+import { childIngredientsMap } from '../../models/mapping'
 import LoadingSpinner from '@/components/ui/loadingspinner'
-
-interface Recipe {
-  idMeal: string
-  strMeal: string
-  strMealThumb: string
-  strCategory: string
-  strArea: string
-  strInstructions: string
-}
-
-interface CuisineOption {
-  value: string
-  label: string
-}
-
-interface CategoryOption {
-  value: string
-  label: string
-}
-
-interface IngredientOption {
-  value: string
-  label: string
-  image: string
-}
 
 const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
 
 export default function RecipesByLetterPage() {
-  const [recipes, setRecipes] = useState<Recipe[]>([])
-  const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([])
+  const [recipes, setRecipes] = useState<MealListItem[]>([])
+  const [filteredRecipes, setFilteredRecipes] = useState<MealListItem[]>([])
   const [currentLetterIndex, setCurrentLetterIndex] = useState(0)
   const [isFetching, setIsFetching] = useState(false)
   const [hasMoreLetters, setHasMoreLetters] = useState(true)
   const [noRecipesFound, setNoRecipesFound] = useState(false)
   const [resultsFound, setResultsFound] = useState(false) // Track if any results are found
-
   const {
     data: ingredients,
     isLoading: ingredientsLoading,
     error: ingredientsError,
   } = useIngredients()
 
-  const [ingredientOptions, setIngredientOptions] = useState<
-    IngredientOption[]
-  >([])
+  const [ingredientOptions, setIngredientOptions] = useState<Ingredient[]>([])
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([])
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [selectedCuisines, setSelectedCuisines] = useState<string[]>([])
-  const [cuisines, setCuisines] = useState<CuisineOption[]>([])
-  const [categories, setCategories] = useState<CategoryOption[]>([])
+  const [cuisines, setCuisines] = useState([])
+  const [categories, setCategories] = useState([])
 
   const observer = useRef<IntersectionObserver | null>(null)
+  const location = useLocation() // Access the current URL location
+  const searchQuery = new URLSearchParams(location.search).get('query') // Extract the search query
 
   const lastRecipeElementRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -160,7 +137,21 @@ export default function RecipesByLetterPage() {
     fetchIngredientOptions()
   }, [ingredients])
 
-  // Apply filtering whenever filters change or recipes are fetched
+  // Apply child ingredients logic
+  const expandIngredients = (ingredients: string[]) => {
+    let expandedIngredients = [...ingredients]
+    ingredients.forEach((ingredient) => {
+      if (childIngredientsMap[ingredient.toLowerCase()]) {
+        expandedIngredients = [
+          ...expandedIngredients,
+          ...childIngredientsMap[ingredient.toLowerCase()],
+        ]
+      }
+    })
+    return expandedIngredients
+  }
+
+  // Apply filtering whenever filters or search query change
   useEffect(() => {
     let filtered = [...recipes]
 
@@ -171,13 +162,16 @@ export default function RecipesByLetterPage() {
       )
     }
 
+    // Expand selected ingredients to include related child ingredients
+    const expandedIngredients = expandIngredients(selectedIngredients)
+
     // Apply ingredient filter if selected
-    if (selectedIngredients.length > 0) {
+    if (expandedIngredients.length > 0) {
       filtered = filtered.filter((recipe) => {
         const recipeIngredients = Object.values(recipe).filter(
           (value) =>
             typeof value === 'string' &&
-            selectedIngredients.some((ingredient) =>
+            expandedIngredients.some((ingredient) =>
               value.toLowerCase().includes(ingredient.toLowerCase()),
             ),
         )
@@ -192,17 +186,31 @@ export default function RecipesByLetterPage() {
       )
     }
 
+    // Filter based on search query
+    if (searchQuery) {
+      filtered = filtered.filter((recipe) =>
+        recipe.strMeal.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+    }
+
     setFilteredRecipes(filtered)
 
     // If no recipes after filtering, continue fetching the next letter
     if (filtered.length === 0 && currentLetterIndex < alphabet.length - 1) {
       setCurrentLetterIndex((prevIndex) => prevIndex + 1)
     }
-  }, [recipes, selectedIngredients, selectedCategories, selectedCuisines])
+  }, [
+    recipes,
+    selectedIngredients,
+    selectedCategories,
+    selectedCuisines,
+    searchQuery,
+  ])
 
-  const handleIngredientChange = (selectedOptions: IngredientOption[]) => {
+  const handleIngredientChange = (selectedOptions: Ingredient[]) => {
     const selectedValues = selectedOptions.map((option) => option.value)
-    setSelectedIngredients(selectedValues)
+    const expandedValues = expandIngredients(selectedValues)
+    setSelectedIngredients(expandedValues)
   }
 
   const handleCategoryChange = (selectedOption: CategoryOption | null) => {
@@ -239,6 +247,31 @@ export default function RecipesByLetterPage() {
       />
 
       <h2 className="mb-8 text-4xl font-bold text-black">Recipes</h2>
+
+      {/* Debug Information Section */}
+      <div className="mb-4 rounded-lg bg-gray-100 p-4 shadow-md">
+        <h3 className="text-xl font-semibold">Debug Information</h3>
+        <p>
+          <strong>Search Query:</strong> {searchQuery || 'None'}
+        </p>
+        <p>
+          <strong>Selected Ingredients:</strong>{' '}
+          {selectedIngredients.length > 0
+            ? selectedIngredients.join(', ')
+            : 'None'}
+        </p>
+        <p>
+          <strong>Selected Cuisines:</strong>{' '}
+          {selectedCuisines.length > 0 ? selectedCuisines.join(', ') : 'None'}
+        </p>
+        <p>
+          <strong>Selected Categories:</strong>{' '}
+          {selectedCategories.length > 0
+            ? selectedCategories.join(', ')
+            : 'None'}
+        </p>
+      </div>
+
       {noRecipesFound && !resultsFound ? (
         <div className="text-center text-xl text-red-500">
           No recipes found with the current filters.
