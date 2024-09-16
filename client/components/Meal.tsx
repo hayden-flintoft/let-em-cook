@@ -11,6 +11,8 @@ export default function RecipePage() {
   const [liked, setLiked] = useState(false)
   const [heartCount, setHeartCount] = useState(0)
 
+  const useAddComment
+
   useEffect(() => {
     if (id) {
       fetchMealById(id)

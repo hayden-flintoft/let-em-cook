@@ -6,6 +6,7 @@ export const up = function (knex) {
   return knex.schema.createTable('user_comments', (table) => {
     table.increments('id').primary()
     table.string('clerk_id')
+    table.string('username')
     table.integer('recipe_id')
     table.string('comment')
   })
