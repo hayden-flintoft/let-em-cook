@@ -14,7 +14,7 @@ export default function Header() {
   }
 
   return (
-    <header className="mx-[10px] mt-[10px] w-[calc(100%-20px)] rounded-3xl bg-white p-4 text-[#9E3700]">
+    <header className="mx-[10px] mt-[10px] w-[calc(100%-20px)] rounded-3xl bg-slate-50 p-4 text-[#9E3700]">
       <div className="container mx-auto flex h-full items-center justify-between">
         {/* Logo */}
         <Link to="/">
@@ -32,12 +32,6 @@ export default function Header() {
             className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]"
           >
             Home
-          </Link>
-          <Link
-            to="/search"
-            className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]"
-          >
-            Search
           </Link>
           <Link
             to="/recipes-by-letter"
@@ -67,11 +61,14 @@ export default function Header() {
                 Sign Out
               </button>
               {/* Chef Icon wrapped in Link */}
-              <Link to="/userprofile" className="rounded-3xl border-2 border-[#9E3700] bg-white px-4 py-3">
+              <Link
+                to="/userprofile"
+                className="rounded-3xl border-2 border-[#9E3700] bg-white px-4 py-3"
+              >
                 <img
                   src="/images/chef.png"
                   alt="Chef Icon"
-                  className="h-10 w-10 object-cover rounded-full" 
+                  className="h-10 w-10 rounded-full object-cover"
                 />
               </Link>
             </div>
