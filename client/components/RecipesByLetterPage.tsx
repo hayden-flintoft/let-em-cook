@@ -9,6 +9,7 @@ import { MealListItem } from '../../models/meals'
 import { Ingredient } from '../../models/ingredients'
 import { childIngredientsMap } from '../../models/mapping'
 import LoadingSpinner from '@/components/ui/loadingspinner'
+import ScrollToTopFAB from '@/components/ScrollToTopFAB' // Import the ScrollToTopFAB
 
 const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
 
@@ -293,6 +294,9 @@ export default function RecipesByLetterPage() {
         </div>
       )}
       {isFetching && <LoadingSpinner size={48} color="text-orange-500" />}
+
+      {/* Scroll to Top Button */}
+      <ScrollToTopFAB />
     </div>
   )
 }
