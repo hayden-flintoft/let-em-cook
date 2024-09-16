@@ -1,11 +1,26 @@
 import React, { useState, useEffect } from 'react'
 
+// Utility function to throttle events
+const throttle = (func: (...args: any[]) => void, limit: number) => {
+  let inThrottle: boolean
+  return function (this: any, ...args: any[]) {
+    if (!inThrottle) {
+      func.apply(this, args)
+      inThrottle = true
+      setTimeout(() => (inThrottle = false), limit)
+    }
+  }
+}
+
 const ScrollToTopFAB: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false)
 
-  // Show or hide the button based on scroll position
+  // Toggle button visibility based on scroll position
   const toggleVisibility = () => {
-    if (window.pageYOffset > 300) {
+    if (
+      document.documentElement.scrollTop > 300 || // For most modern browsers
+      document.body.scrollTop > 300 // Fallback for older browsers
+    ) {
       setIsVisible(true)
     } else {
       setIsVisible(false)
@@ -21,9 +36,12 @@ const ScrollToTopFAB: React.FC = () => {
   }
 
   useEffect(() => {
-    window.addEventListener('scroll', toggleVisibility)
+    // Add throttled scroll event listener
+    const throttledToggleVisibility = throttle(toggleVisibility, 200)
+    window.addEventListener('scroll', throttledToggleVisibility)
+
     return () => {
-      window.removeEventListener('scroll', toggleVisibility)
+      window.removeEventListener('scroll', throttledToggleVisibility)
     }
   }, [])
 
@@ -32,7 +50,8 @@ const ScrollToTopFAB: React.FC = () => {
       {isVisible && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 z-50 rounded-full bg-blue-500 p-4 shadow-lg hover:bg-blue-600 focus:outline-none"
+          className="fixed bottom-6 right-6 z-50 rounded-full bg-blue-500 p-4 shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          aria-label="Scroll to top"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
