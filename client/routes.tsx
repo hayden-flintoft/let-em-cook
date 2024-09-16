@@ -8,6 +8,7 @@ import Layout from './components/Layout.tsx'
 import SearchPage from './components/SearchPage.tsx'
 import RecipesByLetterPage from './components/RecipesByLetterPage.tsx'
 import User from './components/User.tsx'
+// import RecipeSearchPage from './components/RecipeSearchPage.tsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -16,6 +17,7 @@ const router = createBrowserRouter(
       <Route path="/recipe/:id" element={<Meal />} />
       <Route path="/search" element={<SearchPage />} />
       <Route path="recipes-by-letter" element={<RecipesByLetterPage />} />
+      {/* <Route path="/recipe-search" element={<RecipeSearchPage />} /> */}
       <Route path="/userprofile" element={<User />} />
     </Route>,
   ),
