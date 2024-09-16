@@ -30,20 +30,6 @@ interface SearchHeaderProps {
   handleClearParameters: () => void
 }
 
-// Custom component to display ingredient images in the dropdown
-const Option = (props: any) => (
-  <components.Option {...props}>
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <img
-        src={props.data.image}
-        alt={props.data.label}
-        style={{ width: 30, marginRight: 10 }}
-      />
-      {props.data.label}
-    </div>
-  </components.Option>
-)
-
 const SearchHeader: React.FC<SearchHeaderProps> = ({
   ingredientOptions,
   cuisines,
@@ -54,7 +40,6 @@ const SearchHeader: React.FC<SearchHeaderProps> = ({
   handleIngredientChange,
   handleCuisineChange,
   handleCategoryChange,
-
 }) => {
   // Custom component to display ingredient images in the dropdown
   const Option = (props: any) => (
@@ -159,16 +144,6 @@ const SearchHeader: React.FC<SearchHeaderProps> = ({
                 styles={selectStyles}
               />
             </div>
-
-            {/* Clear Parameters Button */}
-            {/* <div className="flex items-end">
-              <button
-                onClick={handleClearParameters}
-                className="mt-6 rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-600"
-              >
-                Clear Parameters
-              </button>
-            </div> */}
           </div>
         </div>
       </div>

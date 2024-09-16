@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import RecipeListItem from '@/components/RecipeListItem'
 import SearchHeader from '@/components/SearchHeader'
 import { getCuisines } from '@/api/cuisines'
 import { getCategories } from '@/api/categories'
 import useIngredients from '@/hooks/use-findrecipe'
+import { Ingredient } from 'models/ingredients'
+import LoadingSpinner from '@/components/ui/loadingspinner'
 
 interface Recipe {
   idMeal: string
@@ -38,12 +40,15 @@ export default function RecipesByLetterPage() {
   const [currentLetterIndex, setCurrentLetterIndex] = useState(0)
   const [isFetching, setIsFetching] = useState(false)
   const [hasMoreLetters, setHasMoreLetters] = useState(true)
+  const [noRecipesFound, setNoRecipesFound] = useState(false)
+  const [resultsFound, setResultsFound] = useState(false) // Track if any results are found
 
   const {
     data: ingredients,
     isLoading: ingredientsLoading,
     error: ingredientsError,
   } = useIngredients()
+
   const [ingredientOptions, setIngredientOptions] = useState<
     IngredientOption[]
   >([])
@@ -80,9 +85,23 @@ export default function RecipesByLetterPage() {
       }
       const data = await response.json()
       const fetchedRecipes = data.meals || []
-      setRecipes((prevRecipes) => [...prevRecipes, ...fetchedRecipes])
+
+      if (fetchedRecipes.length > 0) {
+        setRecipes((prevRecipes) => [...prevRecipes, ...fetchedRecipes])
+        setNoRecipesFound(false)
+        setResultsFound(true) // Mark results found
+      } else if (currentLetterIndex < alphabet.length - 1) {
+        // Move to the next letter if no recipes for the current letter
+        setCurrentLetterIndex((prevIndex) => prevIndex + 1)
+      } else {
+        // If no results found and we've reached the end of the alphabet
+        if (!resultsFound) {
+          setNoRecipesFound(true) // Only set to true if no results found across all letters
+        }
+      }
     } catch (error) {
       console.error('Error fetching recipes:', error)
+      setNoRecipesFound(true)
     } finally {
       setIsFetching(false)
     }
@@ -97,11 +116,12 @@ export default function RecipesByLetterPage() {
     }
   }, [currentLetterIndex])
 
+  // Fetch cuisines and categories
   useEffect(() => {
     const fetchCuisines = async () => {
       try {
         const fetchedCuisines = await getCuisines()
-        const cuisineOptions = fetchedCuisines.map((cuisine: string) => ({
+        const cuisineOptions = fetchedCuisines.map((cuisine: any) => ({
           value: cuisine,
           label: cuisine,
         }))
@@ -114,7 +134,7 @@ export default function RecipesByLetterPage() {
     const fetchCategories = async () => {
       try {
         const fetchedCategories = await getCategories()
-        const categoryOptions = fetchedCategories.map((category: string) => ({
+        const categoryOptions = fetchedCategories.map((category: any) => ({
           value: category,
           label: category,
         }))
@@ -140,34 +160,44 @@ export default function RecipesByLetterPage() {
     fetchIngredientOptions()
   }, [ingredients])
 
-  // Apply filters from SearchHeader to the recipes
+  // Apply filtering whenever filters change or recipes are fetched
   useEffect(() => {
     let filtered = [...recipes]
 
-    // Filter by ingredients
-    if (selectedIngredients.length > 0) {
-      filtered = filtered.filter((recipe) =>
-        selectedIngredients.every((ingredient) =>
-          Object.values(recipe).includes(ingredient),
-        ),
-      )
-    }
-
-    // Filter by categories
+    // Apply category filter if selected
     if (selectedCategories.length > 0) {
-      filtered = filtered.filter(
-        (recipe) => recipe.strCategory === selectedCategories[0],
+      filtered = filtered.filter((recipe) =>
+        selectedCategories.includes(recipe.strCategory),
       )
     }
 
-    // Filter by cuisines
+    // Apply ingredient filter if selected
+    if (selectedIngredients.length > 0) {
+      filtered = filtered.filter((recipe) => {
+        const recipeIngredients = Object.values(recipe).filter(
+          (value) =>
+            typeof value === 'string' &&
+            selectedIngredients.some((ingredient) =>
+              value.toLowerCase().includes(ingredient.toLowerCase()),
+            ),
+        )
+        return recipeIngredients.length > 0
+      })
+    }
+
+    // Apply cuisine filter if selected
     if (selectedCuisines.length > 0) {
-      filtered = filtered.filter(
-        (recipe) => recipe.strArea === selectedCuisines[0],
+      filtered = filtered.filter((recipe) =>
+        selectedCuisines.includes(recipe.strArea),
       )
     }
 
     setFilteredRecipes(filtered)
+
+    // If no recipes after filtering, continue fetching the next letter
+    if (filtered.length === 0 && currentLetterIndex < alphabet.length - 1) {
+      setCurrentLetterIndex((prevIndex) => prevIndex + 1)
+    }
   }, [recipes, selectedIngredients, selectedCategories, selectedCuisines])
 
   const handleIngredientChange = (selectedOptions: IngredientOption[]) => {
@@ -189,13 +219,12 @@ export default function RecipesByLetterPage() {
     setSelectedCuisines([])
   }
 
-  // Show loading or error if necessary
-  if (ingredientsLoading) return <div>Loading...</div>
+  if (ingredientsLoading)
+    return <LoadingSpinner size={48} color="text-orange-500" />
   if (ingredientsError) return <div>Error: {ingredientsError.message}</div>
 
   return (
     <div className="container mx-auto p-8">
-      {/* Include SearchHeader */}
       <SearchHeader
         ingredientOptions={ingredientOptions}
         cuisines={cuisines}
@@ -209,24 +238,28 @@ export default function RecipesByLetterPage() {
         handleClearParameters={handleClearParameters}
       />
 
-      <h2 className="mb-8 text-4xl font-bold text-black">Recipes A to Z</h2>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filteredRecipes.map((recipe, index) => (
-          <div
-            key={recipe.idMeal}
-            ref={
-              index === filteredRecipes.length - 1 ? lastRecipeElementRef : null
-            }
-          >
-            <RecipeListItem recipe={recipe} layout="card" />
-          </div>
-        ))}
-      </div>
-      {isFetching && (
-        <div className="mt-4 flex items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-black"></div>
+      <h2 className="mb-8 text-4xl font-bold text-black">Recipes</h2>
+      {noRecipesFound && !resultsFound ? (
+        <div className="text-center text-xl text-red-500">
+          No recipes found with the current filters.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {filteredRecipes.map((recipe, index) => (
+            <div
+              key={recipe.idMeal}
+              ref={
+                index === filteredRecipes.length - 1
+                  ? lastRecipeElementRef
+                  : null
+              }
+            >
+              <RecipeListItem recipe={recipe} layout="card" />
+            </div>
+          ))}
         </div>
       )}
+      {isFetching && <LoadingSpinner size={48} color="text-orange-500" />}
     </div>
   )
 }
