@@ -3,12 +3,13 @@ import { useParams } from 'react-router-dom'
 import { Heart } from 'lucide-react'
 import AddComment from './CommentForm'
 import { useUser } from '@clerk/clerk-react'
+import { Comment } from 'models/comments'
 
 export default function RecipePage() {
   const { id } = useParams<{ id: string }>()
   const [meal, setMeal] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const [comments, setComments] = useState<string[]>([])
+  const [comments, setComments] = useState<Comment[]>([])
   const [liked, setLiked] = useState(false)
   const [heartCount, setHeartCount] = useState(0)
   const {user} = useUser()
@@ -49,9 +50,11 @@ export default function RecipePage() {
 
   const fetchComments = async (mealId: string) => {
     try {
-      const response = await fetch(`/api/comments/${mealId}`)
+      const response = await fetch(`/api/v1/comments/recipes/${mealId}`)
       const data = await response.json()
-      setComments(data.comments)
+      console.log(data)
+      setComments(data)
+      
     } catch (error) {
       console.error('Error fetching comments:', error)
     }
@@ -155,8 +158,8 @@ export default function RecipePage() {
                   <h3 className="text-xl font-bold text-[#9E3700]">Comments:</h3>
                   <ul className="space-y-2">
                     {comments.map((comment, index) => (
-                      <li key={index} className="rounded-lg bg-gray-100 p-2">{user?.fullName}:  
-                         {comment}
+                      <li key={index} className="rounded-lg bg-gray-100 p-2">{comment.username}:  
+                         {comment.comment}
                       </li>
                     ))}
                   </ul>

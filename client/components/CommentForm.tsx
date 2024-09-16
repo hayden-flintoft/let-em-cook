@@ -26,7 +26,7 @@ export default function AddComment({ setComments, comments }) {
     await addMutation.mutate(commentDataObj)
     setOrderNote('')
     // Update comments in the parent component
-    setComments([...comments, commentDataObj.comment])
+    setComments([...comments, commentDataObj])
   }
 
   return (
