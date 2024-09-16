@@ -8,13 +8,13 @@ interface Recipe {
   strCategory: string
   strArea: string
   strInstructions: string
-  [key: string]: any // For dynamic keys like strIngredient1, strMeasure1, etc.
+  [key: string]: any
 }
 
 interface RecipeListItemProps {
   recipe: Recipe
-  layout?: 'fullWidth' | 'card' // Optional prop to switch layouts
-  maxIngredients?: number // Optional prop to limit ingredients displayed
+  layout?: 'fullWidth' | 'card'
+  maxIngredients?: number
 }
 
 const RecipeListItem: React.FC<RecipeListItemProps> = ({
@@ -24,78 +24,38 @@ const RecipeListItem: React.FC<RecipeListItemProps> = ({
 }) => {
   const navigate = useNavigate()
 
-  // Extract ingredients and measures
-  const ingredients: string[] = []
-  for (let i = 1; i <= 20; i++) {
-    const ingredient = recipe[`strIngredient${i}`]
-    const measure = recipe[`strMeasure${i}`]
-    if (ingredient && ingredient.trim() !== '') {
-      ingredients.push(`${measure ? measure : ''} ${ingredient}`.trim())
-    }
-  }
-
-  // Get the first n ingredients
-  const displayedIngredients = ingredients.slice(0, maxIngredients).join(', ')
-  const hasMoreIngredients = ingredients.length > maxIngredients
-
-  // Shorten instructions
-  const maxDescriptionLength = 100
-  const isDescriptionTruncated =
-    recipe.strInstructions.length > maxDescriptionLength
-  const shortDescription = isDescriptionTruncated
-    ? `${recipe.strInstructions.substring(0, maxDescriptionLength)}...`
-    : recipe.strInstructions
-
   const handleClick = () => {
     navigate(`/recipe/${recipe.idMeal}`)
   }
 
-  // Define polaroid style
-  const polaroidStyle = {
-    border: '15px solid #fff',
-    borderBottomWidth: '35px', // Thicker bottom border
-    borderRadius: '5px',
-    overflow: 'hidden',
-    backgroundColor: '#fff',
-  }
-
   return (
     <div
-      className={`cursor-pointer shadow ${layout === 'fullWidth' ? 'flex' : ''}`}
+      className="cursor-pointer overflow-hidden rounded-3xl shadow-md transition-all hover:shadow-lg bg-white"
       onClick={handleClick}
-      style={{ ...polaroidStyle, height: '400px' }} // Combine polaroid style and fixed height
+      style={{ maxWidth: layout === 'card' ? '300px' : 'none' }}
     >
-      <div className={`${layout === 'fullWidth' ? 'w-1/3' : 'h-1/2 w-full'}`}>
+      <div className="relative">
         <img
           src={recipe.strMealThumb}
           alt={recipe.strMeal}
-          className="h-full w-full object-cover"
+          className="w-full h-48 object-cover"
         />
       </div>
-      <div
-        className={`overflow-hidden p-4 ${
-          layout === 'fullWidth' ? 'w-2/3' : ''
-        }`}
-      >
-        <h4 className="truncate text-xl font-semibold">{recipe.strMeal}</h4>
-        <p className="text-sm text-gray-600">
-          {recipe.strCategory} - {recipe.strArea}
+      <div className="p-4">
+        <h4 className="text-lg font-semibold mb-1 truncate">{recipe.strMeal}</h4>
+        <p className="text-sm text-gray-600 mb-2">
+          {recipe.strArea}
         </p>
-        <p className="mt-2 text-sm text-gray-800">
-          <strong>Ingredients:</strong>{' '}
-          <span className="line-clamp-2">
-            {displayedIngredients}
-            {hasMoreIngredients && '...'}
-          </span>
-        </p>
-        <p className="mt-2 line-clamp-3 text-sm text-gray-800">
-          {shortDescription}
-        </p>
-        {isDescriptionTruncated && (
-          <p className="mt-2 text-center">
-            <span className="text-blue-500">Read more</span>
-          </p>
-        )}
+        
+        <div className="flex justify-between items-center text-sm text-gray-600">
+          
+          <div className="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.701 2.701 0 00-1.5-.454M9 6v2m3-2v2m3-2v2M9 3h.01M12 3h.01M15 3h.01M21 21v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7h18zm-3-9v-2a2 2 0 00-2-2H8a2 2 0 00-2 2v2h12z" />
+            </svg>
+            {recipe.strCategory}
+          </div>
+        </div>
       </div>
     </div>
   )

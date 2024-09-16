@@ -66,15 +66,23 @@ const SearchHeader: React.FC<SearchHeaderProps> = ({
       style={{ height: '400px' }}
     >
       <img
-        src="/images/Meals-by-Chefkraft.png"
+        src="images/toys1.png"
         alt="Various delicious meals"
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover rounded-3xl"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent">
+      <div className="absolute inset-0 bg-gradient-to-t from-black/95 to-transparent">
         <div className="container relative z-10 mx-auto p-8">
-          <h2 className="mb-8 text-4xl font-bold text-white drop-shadow-lg">
-            Select Cuisine and Add Your Ingredients
-          </h2>
+          <br></br>
+          <br></br>
+          <br></br>
+          <br></br>
+          <br></br>
+          <br></br>
+          <br></br>
+          <br></br>
+          {/* <h2 className="mb-8 text-center text-5xl font-bold text-white drop-shadow-lg">
+            Filter for recipe!
+          </h2> */}
 
           <div className="mb-4 flex flex-wrap justify-center space-x-4">
             {/* Ingredients Selection with Search, Multi-select & Images */}
