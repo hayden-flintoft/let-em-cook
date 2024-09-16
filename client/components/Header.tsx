@@ -24,15 +24,8 @@ export default function Header() {
             className="h-full object-contain" // Ensure the logo fits within the header height
           />
         </Link>
-
         {/* Navigation Links */}
         <nav className="space-x-4">
-          <Link
-            to="/"
-            className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]"
-          >
-            Home
-          </Link>
           <Link
             to="/recipes-by-letter"
             className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]"

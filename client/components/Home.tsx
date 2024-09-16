@@ -2,51 +2,90 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 export default function Home() {
-  const popularCategories = [
-    { name: 'French', imageUrl: 'images/French.png' },
-    { name: 'Indian', imageUrl: '/images/Indian.png' },
-    { name: 'Italian', imageUrl: 'images/Italian.png' },
-    { name: 'Japanese', imageUrl: 'images/Japanese.png' },
-    { name: 'Mexican', imageUrl: 'images/Mexican.png' },
-    { name: 'Thai', imageUrl: 'images/Thai.png' },
+  const categories = [
+    'Beef',
+    'Breakfast',
+    'Chicken',
+    'Dessert',
+    'Goat',
+    'Lamb',
+    'Miscellaneous',
+    'Pasta',
+    'Pork',
+    'Seafood',
+    'Side',
+    'Starter',
+    'Vegan',
+    'Vegetarian',
   ]
 
-  const placeholderCategories = [
-    { name: 'Spanish', imageUrl: 'images/Spanish.png' },
-    { name: 'Chinese', imageUrl: 'images/Chinese.png' },
-    { name: 'Greek', imageUrl: 'images/Greek.png' },
-    { name: 'Korean', imageUrl: 'images/Korean.png' },
-    { name: 'Brazilian', imageUrl: 'images/Brazilian.png' },
-    { name: 'Turkish', imageUrl: 'images/Turkish.png' },
+  const cuisines = [
+    'American',
+    'British',
+    'Canadian',
+    'Chinese',
+    'Croatian',
+    'Dutch',
+    'Egyptian',
+    'Filipino',
+    'French',
+    'Greek',
+    'Indian',
+    'Irish',
+    'Italian',
+    'Jamaican',
+    'Japanese',
+    'Kenyan',
+    'Malaysian',
+    'Mexican',
+    'Moroccan',
+    'Polish',
+    'Portuguese',
+    'Russian',
+    'Spanish',
+    'Thai',
+    'Tunisian',
+    'Turkish',
+    'Ukrainian',
+    'Unknown',
+    'Vietnamese',
   ]
 
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [selectedOption, setSelectedOption] = useState<string | null>(null)
   const [recipes, setRecipes] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
+  const [isCuisine, setIsCuisine] = useState(false) // Track if selected is cuisine or category
   const carouselRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
 
-  // Fetch recipes when a category is selected
+  // Create a combined array of categories and cuisines
+  const allOptions = [...cuisines, ...categories]
+
+  // Fetch recipes when a category or cuisine is selected
   useEffect(() => {
-    // Select a random non-placeholder category on page load
-    const randomCategory =
-      popularCategories[Math.floor(Math.random() * popularCategories.length)]
-    setSelectedCategory(randomCategory.name)
+    const randomOption =
+      allOptions[Math.floor(Math.random() * allOptions.length)]
+    const isSelectedCuisine = cuisines.includes(randomOption)
+
+    setSelectedOption(randomOption)
+    setIsCuisine(isSelectedCuisine)
   }, [])
 
   useEffect(() => {
-    if (selectedCategory) {
-      fetchRecipesByCategory(selectedCategory)
+    if (selectedOption) {
+      fetchRecipes(selectedOption, isCuisine)
     }
-  }, [selectedCategory])
+  }, [selectedOption, isCuisine])
 
-  // Function to fetch recipes by category
-  const fetchRecipesByCategory = async (category: string) => {
+  // Function to fetch recipes by category or cuisine
+  const fetchRecipes = async (option: string, isCuisine: boolean) => {
     setLoading(true)
     try {
-      const response = await fetch(
-        `https://www.themealdb.com/api/json/v1/1/filter.php?a=${category}`,
-      )
+      const apiUrl = isCuisine
+        ? `https://www.themealdb.com/api/json/v1/1/filter.php?a=${option}` // Cuisine API
+        : `https://www.themealdb.com/api/json/v1/1/filter.php?c=${option}` // Category API
+
+      const response = await fetch(apiUrl)
       const data = await response.json()
       setRecipes(data.meals || [])
     } catch (error) {
@@ -74,43 +113,54 @@ export default function Home() {
     }
   }
 
-  const PopularCategory = ({ name, imageUrl }) => (
+  const Option = ({
+    name,
+    type,
+  }: {
+    name: string
+    type: 'category' | 'cuisine'
+  }) => (
     <div
       className={`mx-4 flex min-w-[150px] cursor-pointer flex-col items-center ${
-        name === selectedCategory ? 'border-b-4 border-yellow-500' : ''
-      }`} // Add visual cue (underline) to selected category
-      onClick={() => setSelectedCategory(name)}
+        name === selectedOption ? 'border-b-4 border-yellow-500' : ''
+      }`} // Add visual cue (underline) to selected category/cuisine
+      onClick={() => {
+        setSelectedOption(name)
+        setIsCuisine(type === 'cuisine')
+      }}
     >
       <img
-        src={imageUrl}
+        src={`images/${name}.png`} // Image for each category/cuisine
         alt={name}
         className={`mb-2 h-16 w-16 rounded-full object-cover ${
-          name === selectedCategory ? 'ring-2 ring-yellow-500' : ''
-        }`} // Add a ring effect around the selected category
+          name === selectedOption ? 'ring-2 ring-yellow-500' : ''
+        }`} // Add a ring effect around the selected option
       />
       <span
         className={`text-sm ${
-          name === selectedCategory ? 'font-bold text-yellow-500' : ''
-        }`} // Highlight the selected category text
+          name === selectedOption ? 'font-bold text-yellow-500' : ''
+        }`} // Highlight the selected option text
       >
         {name}
       </span>
     </div>
   )
 
-  // Scroll the carousel slowly
+  // Infinite scroll effect using a duplicated array
+  const optionsList = [...allOptions, ...allOptions] // Duplicate the array
+
   useEffect(() => {
     const scrollInterval = setInterval(() => {
       if (carouselRef.current) {
         carouselRef.current.scrollLeft += 1 // Adjust the speed as needed
         if (
           carouselRef.current.scrollLeft >=
-          carouselRef.current.scrollWidth - carouselRef.current.clientWidth
+          carouselRef.current.scrollWidth / 2 // When we reach the middle, jump back to the start
         ) {
-          carouselRef.current.scrollLeft = 0 // Loop back to the start
+          carouselRef.current.scrollLeft = 0 // Reset scroll to the beginning
         }
       }
-    }, 30) // Speed of the scroll
+    }, 1) // Speed of the scroll
 
     return () => clearInterval(scrollInterval) // Clean up the interval
   }, [])
@@ -138,20 +188,19 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Popular Categories Carousel */}
+      {/* Categories and Cuisines Carousel */}
       <section>
-        <h3 className="mb-4 text-2xl font-semibold">Popular Categories</h3>
+        <h3 className="mb-4 text-2xl font-semibold">Categories & Cuisines</h3>
         <div
           ref={carouselRef}
           className="no-scrollbar flex overflow-x-auto whitespace-nowrap"
         >
-          {popularCategories.map((category) => (
-            <PopularCategory key={category.name} {...category} />
-          ))}
-
-          {/* Placeholder Categories */}
-          {placeholderCategories.map((category) => (
-            <PopularCategory key={category.name} {...category} />
+          {optionsList.map((option, index) => (
+            <Option
+              key={`${option}-${index}`} // Use both option and index to generate unique keys
+              name={option}
+              type={cuisines.includes(option) ? 'cuisine' : 'category'}
+            />
           ))}
 
           {/* Random Recipe Option */}
@@ -170,10 +219,10 @@ export default function Home() {
       </section>
 
       {/* Recipes List */}
-      {selectedCategory && (
+      {selectedOption && (
         <section>
           <h3 className="mb-4 mt-8 text-2xl font-semibold">
-            {selectedCategory} Recipes
+            {selectedOption} {isCuisine ? 'Cuisine' : 'Category'} Recipes
           </h3>
           {loading ? (
             <div>Loading...</div>
@@ -197,7 +246,7 @@ export default function Home() {
               ))}
             </div>
           ) : (
-            <div>No recipes found for {selectedCategory}</div>
+            <div>No recipes found for {selectedOption}</div>
           )}
         </section>
       )}
