@@ -36,14 +36,13 @@ export default function Header() {
         </Link>
 
         {/* Navigation Links */}
-        <nav className="space-x-4">
-          <Link
-            to="/recipes-by-letter"
-            className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]"
-          >
-            All Recipes
-          </Link>
-        </nav>
+        {/* <span className="text-4xl font-extrabold text-[#9E3700]">
+                Hello, {user?.firstName}
+              </span> */}
+        <Link to="/search"
+        className="rounded-3xl bg-[#9E3700]  w-40 h-10  text-3xl font-extrabold text-white focus:outline-none text-center">
+          <p>Browse</p> 
+        </Link>
 
         {/* Search Bar */}
         <form onSubmit={handleSearch} className="mr-4">
@@ -56,7 +55,7 @@ export default function Header() {
           />
           <button
             type="submit"
-            className="ml-2 rounded-full bg-[#9E3700] px-4 py-2 text-white"
+            className="ml-2 rounded-full h-10 w-20 border border-[#9E3700] text-[#9E3700] "
           >
             Search
           </button>
@@ -66,29 +65,26 @@ export default function Header() {
           {!user ? (
             <button
               onClick={handleSignIn}
-              className="rounded-3xl border-2 border-[#9E3700] bg-white px-6 py-3 text-3xl font-extrabold text-[#9E3700] hover:bg-gray-100 focus:outline-none"
+              className="rounded-3xl bg-[#9E3700]  w-40 h-10  text-3xl font-extrabold text-white focus:outline-none"
             >
               Sign In
             </button>
           ) : (
             <div className="flex items-center space-x-4">
-              <span className="text-3xl font-extrabold text-[#9E3700]">
-                Hello, {user.firstName}
-              </span>
               <button
                 onClick={handleSignOut}
-                className="rounded-3xl border-2 border-[#9E3700] bg-white px-6 py-3 text-3xl font-extrabold text-[#9E3700] hover:bg-gray-100 focus:outline-none"
+                className="rounded-3xl bg-[#9E3700] w-40 h-10  text-xl font-extrabold text-white focus:outline-none"
               >
                 Sign Out
               </button>
               <Link
                 to="/userprofile"
-                className="rounded-3xl border-2 border-[#9E3700] bg-white px-4 py-3"
+                className="rounded-3xl bg-[#9E3700] w-10 h-10 "
               >
                 <img
-                  src="/images/chef.png"
+                  src="images/chef (1).png"
                   alt="Chef Icon"
-                  className="h-10 w-10 rounded-full object-cover"
+                  className="rounded-full object-cover"
                 />
               </Link>
             </div>
