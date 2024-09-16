@@ -17,7 +17,6 @@ router.get('/recipes/:id', async (req, res) => {
 
 router.post('/recipes', async (req, res) => {
   const addComment = req.body
-  console.log(addComment)
   try {
     await db.addCommentByRecipeId(addComment)
     res.sendStatus(202)
