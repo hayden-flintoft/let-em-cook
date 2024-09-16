@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { carouselCategories, carouselCuisines } from '../../models/carouselData'
 import { useFetchRecipes } from '@/hooks/useFetchRecipes'
 import Carousel from './Carousel'
-import RecipesList from './RecipesList'
+import RecipesList from './RecipesListBrief'
 import RandomRecipeButton from './RandomRecipeButton'
 
 export default function Home() {

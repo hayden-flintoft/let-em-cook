@@ -1,45 +1,30 @@
-import { Link } from 'react-router-dom'
+import React, { useCallback } from 'react'
+import RecipeListItem from '@/components/RecipeListItem'
 
 interface RecipesListProps {
   recipes: any[]
-  loading: boolean
-  selectedOption: string | null
-  isCuisine: boolean
+  lastRecipeElementRef: (node: HTMLDivElement | null) => void
+  isFetching: boolean
 }
 
-export default function RecipesList({
+const RecipesList: React.FC<RecipesListProps> = ({
   recipes,
-  loading,
-  selectedOption,
-  isCuisine,
-}: RecipesListProps) {
+  lastRecipeElementRef,
+  isFetching,
+}) => {
   return (
-    <section>
-      <h3 className="mb-4 mt-8 text-2xl font-semibold">
-        {selectedOption} {isCuisine ? 'Cuisine' : 'Category'} Recipes
-      </h3>
-      {loading ? (
-        <div>Loading...</div>
-      ) : recipes.length > 0 ? (
-        <div className="grid grid-cols-3 gap-4">
-          {recipes.map((recipe) => (
-            <Link
-              key={recipe.idMeal}
-              to={`/recipe/${recipe.idMeal}`} // Navigate to the recipe page
-              className="shadow-neumorph hover:shadow-neumorph-pressed flex flex-col items-center rounded-lg p-4"
-            >
-              <img
-                src={recipe.strMealThumb}
-                alt={recipe.strMeal}
-                className="mb-2 h-32 w-32 rounded-full object-cover"
-              />
-              <span className="text-lg font-semibold">{recipe.strMeal}</span>
-            </Link>
-          ))}
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {recipes.map((recipe, index) => (
+        <div
+          key={recipe.idMeal}
+          ref={index === recipes.length - 1 ? lastRecipeElementRef : null}
+        >
+          <RecipeListItem recipe={recipe} layout="card" />
         </div>
-      ) : (
-        <div>No recipes found for {selectedOption}</div>
-      )}
-    </section>
+      ))}
+      {isFetching && <div>Loading more...</div>}
+    </div>
   )
 }
+
+export default RecipesList
