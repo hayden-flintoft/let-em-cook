@@ -5,25 +5,25 @@ const teamMembers = [
   {
     name: 'Edward Soung',
     role: 'Product Owner',
-    img: 'images/Eddie.png',
+    img: '/images/Eddie.png',
     GitHub: 'https://github.com/EddieWeddie11',
   },
   {
     name: 'Hayden Flintoft',
     role: 'Product Owner / Backend Engineer',
-    img: 'images/Hayden.png',
+    img: '/images/Hayden.png',
     GitHub: 'https://github.com/hayden-flintoft',
   },
   {
     name: 'Edward Rainger',
     role: 'Frontend Engineer',
-    img: 'images/Ted.png',
+    img: '/images/Ted.png',
     GitHub: 'https://github.com/edward-rainger',
   },
   {
     name: 'Karl Bloomfield',
     role: 'Backend Engineer',
-    img: 'images/Karl.png',
+    img: '/images/Karl.png',
     GitHub: 'https://github.com/karl-bloomfield',
   },
 ];

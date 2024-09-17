@@ -30,7 +30,10 @@ export default function AddComment({ setComments, comments }) {
   }
 
   return (
-    <form onSubmit={onSubmit}>
+    <form
+      onSubmit={onSubmit}
+      className="rounded-lg border border-[#9E3700] p-4"
+    >
       <textarea
         id="OrderNotes"
         value={orderNote}
@@ -41,9 +44,12 @@ export default function AddComment({ setComments, comments }) {
       ></textarea>
       <br />
       <br />
-      <button className="rounded bg-[#9E3700] px-3 py-1.5 text-sm font-medium text-white">
-        Add
-      </button>
+      {/* Add button moved to the right */}
+      <div className="flex justify-end">
+        <button className="rounded bg-[#9E3700] px-3 py-1.5 text-sm font-medium text-white">
+          Add
+        </button>
+      </div>
     </form>
   )
 }

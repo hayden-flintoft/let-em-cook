@@ -68,7 +68,7 @@ export default function Home() {
       <section className="">
         <img
           className="mx-auto mb-10 mt-20"
-          src="images/categories-cuisines.png"
+          src="/images/categories-cuisines.png"
           alt="Title"
         />
         <div className="mb-5">
