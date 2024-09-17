@@ -17,5 +17,5 @@ export const up = function (knex) {
  * @returns { Promise<void> }
  */
 export const down = function (knex) {
-  return knex.schema.dropTable('user_recipe_reactions')
+  return knex.schema.dropTable('user_comments')
 }

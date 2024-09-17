@@ -3,8 +3,6 @@ import * as db from '../db/functions/users'
 
 const router = express.Router()
 
-// Get '/api/v1/comments/recipes/:id
-
 router.get('/recipes/:id', async (req, res) => {
   const id = Number(req.params.id)
   try {
