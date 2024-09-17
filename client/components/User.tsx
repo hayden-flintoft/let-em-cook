@@ -3,7 +3,6 @@ import { useClerk, useUser } from '@clerk/clerk-react';
 import { Heart } from 'lucide-react';
 import { fetchRecipeById } from '@/api/recipes';
 import { Meal } from 'models/meals';
-import { AuroraBackground } from './ui/aurora-background';
 
 
 export default function User() {
