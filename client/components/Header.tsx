@@ -79,7 +79,7 @@ const Header = () => {
                 Sign In
               </button>
             ) : (
-              <div className="flex items-center space-x-4 pt-2">
+              <div className="flex items-center space-x-4 pt-1">
                 <button
                   onClick={handleSignOut}
                   className="mt-4 rounded-full bg-[#9E3700] px-6 py-2 text-lg font-semibold text-white hover:bg-[#7A2A00] focus:outline-none"
