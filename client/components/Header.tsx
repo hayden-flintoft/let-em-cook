@@ -74,7 +74,7 @@ const Header = () => {
             {!user ? (
               <button
                 onClick={handleSignIn}
-                className="rounded-full bg-[#9E3700] px-6 py-2 text-lg font-semibold text-white hover:bg-[#7A2A00] focus:outline-none"
+                className="mt-4 rounded-full bg-[#9E3700] px-6 py-2 text-lg font-semibold text-white hover:bg-[#7A2A00] focus:outline-none"
               >
                 Sign In
               </button>

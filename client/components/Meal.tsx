@@ -10,6 +10,7 @@ export default function RecipePage() {
   const [meal, setMeal] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [comments, setComments] = useState<Comment[]>([])
+  const [showVideo, setShowVideo] = useState(false) // Start with video hidden
   const { user } = useUser()
 
   useEffect(() => {
@@ -19,6 +20,7 @@ export default function RecipePage() {
     }
   }, [id])
 
+  // Fetch meal by ID
   const fetchMealById = async (mealId: string) => {
     setLoading(true)
     try {
@@ -26,7 +28,13 @@ export default function RecipePage() {
         `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${mealId}`,
       )
       const data = await response.json()
-      setMeal(data.meals[0])
+      const mealData = data.meals[0]
+      setMeal(mealData)
+
+      // Check if YouTube video is available after meal is set
+      if (mealData.strYoutube) {
+        checkVideoAvailability(mealData.strYoutube.split('=')[1]) // Extract YouTube video ID
+      }
     } catch (error) {
       console.error('Error fetching meal details:', error)
     } finally {
@@ -44,14 +52,29 @@ export default function RecipePage() {
     }
   }
 
+  // Check YouTube video availability
+  const checkVideoAvailability = async (videoId: string) => {
+    try {
+      const response = await fetch(
+        `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`,
+      )
+      if (response.ok) {
+        setShowVideo(true) // Only show video if it's available
+      }
+    } catch (error) {
+      console.error('Error checking YouTube video availability:', error)
+      setShowVideo(false) // In case of any error, hide the video
+    }
+  }
+
   if (loading) return <div>Loading...</div>
 
   if (!meal) return <div>Recipe not found.</div>
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="relative w-full max-w-4xl rounded-3xl p-6 shadow-neumorph hover:shadow-neumorph-pressed md:p-10">
-        <h2 className="mb-4 text-3xl font-extrabold tracking-tight text-[#9E3700]">
+      <div className="shadow-neumorph relative w-full max-w-4xl rounded-3xl md:p-10">
+        <h2 className="mb-10 text-center text-3xl font-extrabold tracking-tight text-[#9E3700]">
           {meal.strMeal}
         </h2>
 
@@ -66,7 +89,7 @@ export default function RecipePage() {
           />
           {/* Ingredients List */}
           <section>
-            <h3 className="mb-2 text-2xl font-bold text-[#9E3700]">
+            <h3 className="mb-5 mt-10 text-2xl font-bold text-[#9E3700]">
               Ingredients!
             </h3>
             <div className="container mx-auto p-4">
@@ -80,7 +103,7 @@ export default function RecipePage() {
                       className="mb-2 flex items-center space-x-2"
                     >
                       <input type="checkbox" className="mr-2" />
-                      <p className="text-primary-dark">
+                      <p className="text-primary-dark text-lg font-semibold">
                         {measure} {ingredient}
                       </p>
                     </div>
@@ -92,30 +115,31 @@ export default function RecipePage() {
           </section>
           {/* Instructions */}
           <section>
-            <h3 className="mb-2 text-2xl font-bold text-[#9E3700]">
+            <h3 className="mb-5 text-2xl font-bold text-[#9E3700]">
               Step by step!
             </h3>
             <p className="text-primary-light text-lg">{meal.strInstructions}</p>
           </section>
 
-          {/* YouTube Video */}
-          {meal.strYoutube && (
-            <section>
-              <h3 className="mb-2 text-2xl font-bold text-[#9E3700]">
+          {/* Conditionally render the heading and video */}
+          {meal.strYoutube && showVideo && (
+            <>
+              <p className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]">
                 Watch how to make it
-              </h3>
+              </p>
+              <br />
               <div className="flex justify-center">
                 <iframe
-                  width="100%"
+                  width="560"
                   height="315"
                   src={`https://www.youtube.com/embed/${meal.strYoutube.split('=')[1]}`}
                   title="YouTube video player"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  className="rounded-lg md:w-[80%]"
+                  className="w-[60%] rounded-lg"
                 ></iframe>
               </div>
-            </section>
+            </>
           )}
 
           {/* Comments Section */}
