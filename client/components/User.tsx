@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useClerk, useUser } from '@clerk/clerk-react';
 import { Heart } from 'lucide-react';
+import useRecipe from '@/hooks/useFetchRecipeById';
 
 export default function User() {
   const { user } = useUser();
   const { openUserProfile } = useClerk();
   const [likedRecipes, setLikedRecipes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedRecipeId, setSelectedRecipeId] = useState(null);
+
+  const { data: selectedRecipe, isLoading: isRecipeLoading } = useRecipe(selectedRecipeId);
 
   useEffect(() => {
     fetchLikedRecipes();
@@ -29,6 +33,12 @@ export default function User() {
   const handleOpenUserProfile = () => {
     openUserProfile();
   };
+
+  const handleRecipeClick = (recipeId) => {
+    setSelectedRecipeId(recipeId);
+  };
+
+
 
   return (
     <div className="relative max-w-4xl mx-auto bg-[#9E3700] shadow-lg rounded-3xl overflow-hidden">
@@ -59,21 +69,22 @@ export default function User() {
         </div>
       </div>
 
-      {/* Horizontal line */}
       <div className="border-b border-white w-full relative z-10"></div>
 
-      {/* Liked recipes */}
       <div className="p-6 z-10 relative">
         {isLoading ? (
           <p className="text-white">Loading liked recipes...</p>
         ) : (
           <div className="grid grid-cols-2 gap-4">
             {likedRecipes.map((recipe) => (
-              <div key={recipe.recipeId} className="bg-white p-4 rounded-lg shadow-md">
-                <img src={recipe.image} alt={recipe.name} className="w-full h-40 object-cover rounded-lg" />
+              <div 
+                key={recipe.recipeId} 
+                className="bg-white p-4 rounded-lg shadow-md cursor-pointer"
+                onClick={() => handleRecipeClick(recipe.recipeId)}
+              >
+                <img src={recipe.id} alt={recipe.recipe} className="w-full h-40 object-cover rounded-lg" />
                 <h3 className="text-xl font-semibold mt-2">{recipe.name}</h3>
                 <p className="text-gray-600">{recipe.description}</p>
-                {/* You can add more details like ingredients, cooking time, etc. */}
               </div>
             ))}
           </div>
@@ -83,6 +94,35 @@ export default function User() {
           <p className="text-white">You haven't liked any recipes yet.</p>
         )}
       </div>
+
+      {selectedRecipeId && (
+        <div className="p-6 bg-white rounded-lg mt-6">
+          <h2 className="text-2xl font-bold mb-4">Selected Recipe</h2>
+          {isRecipeLoading ? (
+            <p>Loading recipe...</p>
+          ) : selectedRecipe ? (
+            <div>
+              <h3 className="text-xl font-semibold">{selectedRecipe.name}</h3>
+              <img src={selectedRecipe.image} alt={selectedRecipe.name} className="w-full h-60 object-cover rounded-lg my-4" />
+              <p>{selectedRecipe.description}</p>
+              <h4 className="font-semibold mt-4">Ingredients:</h4>
+              <ul className="list-disc pl-5">
+                {selectedRecipe.ingredients.map((ingredient, index) => (
+                  <li key={index}>{ingredient}</li>
+                ))}
+              </ul>
+              <h4 className="font-semibold mt-4">Instructions:</h4>
+              <ol className="list-decimal pl-5">
+                {selectedRecipe.instructions.map((instruction, index) => (
+                  <li key={index}>{instruction}</li>
+                ))}
+              </ol>
+            </div>
+          ) : (
+            <p>Recipe not found</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

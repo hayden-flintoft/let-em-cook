@@ -15,8 +15,8 @@ export default function RecipesList({
 }: RecipesListProps) {
   return (
     <section>
-
-      <h3 className="mb-4 mt-8 text-lg font-semibold md:text-2xl">
+      <br></br>
+      <h3 className="mb-4 mt-8 text-3xl text-[#9E3700] text-center font-bold ">
 
         {selectedOption} {isCuisine ? 'Cuisine' : 'Category'} Recipes
       </h3>
