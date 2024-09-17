@@ -91,7 +91,14 @@ export default function Header() {
                 className="h-10 w-10 rounded-3xl bg-[#9E3700]"
                 className="rounded-3xl bg-[#9E3700] w-10 h-10 text-white text-center "
               >
+                <img
+                  src="/images/chef (1).png"
+                  alt="Chef Icon"
+                  className="rounded-full object-cover"
+                />
+
                  {user?.firstName?.[0]}
+
               </Link>
             </div>
           )}

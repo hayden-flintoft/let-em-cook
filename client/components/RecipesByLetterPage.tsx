@@ -250,13 +250,6 @@ export default function RecipesByLetterPage() {
 
       <h2 className="mb-8 text-4xl font-bold text-black">Recipes</h2>
 
-      <FiltersDebugInfo
-        searchQuery={searchQuery}
-        selectedIngredients={selectedIngredients}
-        selectedCuisines={selectedCuisines}
-        selectedCategories={selectedCategories}
-      />
-
       {noRecipesFound && !resultsFound ? (
         <div className="text-center text-xl text-red-500">
           No recipes found with the current filters.

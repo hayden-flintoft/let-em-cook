@@ -10,3 +10,8 @@ export const fetchRecipesAlphabetically = async (
   )
   return response.body
 }
+
+export const fetchRecipeById = async (id: string) => {
+  const response = await request.get(`/api/v1/meals/${id}`)
+  return response.body
+}
