@@ -66,9 +66,8 @@ export default function Home() {
 
       {/* Carousel Component */}
       <section>
-        <h3 className="mb-4 text-lg font-semibold md:text-2xl">
-          Categories & Cuisines
-        </h3>
+        <img src="images/categories-cuisines.png" alt="Title"></img>
+        <br></br>
         <Carousel
           options={allOptions}
           selectedOption={selectedOption}
