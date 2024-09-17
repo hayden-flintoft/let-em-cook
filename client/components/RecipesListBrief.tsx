@@ -14,12 +14,12 @@ export default function RecipesList({
   isCuisine,
 }: RecipesListProps) {
   return (
-    <section>
-      <br></br>
+    <section className="flex flex-col items-center justify-center text-center">
+      <br />
       <h3 className="mb-4 mt-8 text-3xl font-bold text-[#9E3700]">
         {selectedOption} {isCuisine ? 'Cuisine' : 'Category'} Recipes
       </h3>
-
+  
       {loading ? (
         <div>Loading...</div>
       ) : recipes.length > 0 ? (
@@ -32,5 +32,5 @@ export default function RecipesList({
         <div>No recipes found for {selectedOption}</div>
       )}
     </section>
-  )
+  );
 }
