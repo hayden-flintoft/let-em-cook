@@ -4,6 +4,7 @@ import AddComment from './CommentForm'
 import { useUser } from '@clerk/clerk-react'
 import { Comment } from 'models/comments'
 import Like from './LikeButton'
+import { Link } from 'react-router-dom'
 
 export default function RecipePage() {
   const { id } = useParams<{ id: string }>()
@@ -166,12 +167,15 @@ export default function RecipePage() {
                 {comments.length > 0 ? (
                   comments.map((comment, index) => (
                     <li key={index} className="rounded-lg bg-gray-100 p-2">
-                      <p>
-                        <strong className="text-[#9E3700]">
-                          {comment.username}:
-                        </strong>{' '}
-                        {comment.comment}
-                      </p>
+                   <div className="grid grid-cols-[auto,1fr] gap-4 items-center">
+    <Link
+      to="/userprofile"
+      className="flex h-12 w-12 items-center justify-center rounded-full bg-[#9E3700] text-xl font-bold text-white"
+    >
+      {user.firstName?.[0] || <User className="h-6 w-6" />}
+    </Link>
+    <p className="text-left">{comment.comment}</p>
+  </div>
                     </li>
                   ))
                 ) : (
