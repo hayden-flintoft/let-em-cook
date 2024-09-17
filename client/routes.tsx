@@ -5,6 +5,7 @@ import Meal from './components/Meal.tsx'
 import Layout from './components/Layout.tsx'
 import RecipesByLetterPage from './components/RecipesByLetterPage.tsx'
 import User from './components/User.tsx'
+import AboutUs from './components/About.tsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -14,6 +15,7 @@ const router = createBrowserRouter(
       <Route path="/recipes-by-letter" element={<RecipesByLetterPage />} />
       <Route path="/search" element={<RecipesByLetterPage />} />{' '}
       <Route path="/userprofile" element={<User />} />
+      <Route path="/about" element={<AboutUs />} />
     </Route>,
   ),
 )
