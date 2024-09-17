@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useClerk, useUser } from '@clerk/clerk-react';
 import { Heart } from 'lucide-react';
-import useRecipe from '@/hooks/useFetchRecipeById';
+import { fetchRecipeById } from '@/api/recipes';
+import { Meal } from 'models/meals';
+
 
 export default function User() {
   const { user } = useUser();
   const { openUserProfile } = useClerk();
-  const [likedRecipes, setLikedRecipes] = useState([]);
+  const [likedRecipes, setLikedRecipes] = useState([] as Meal[]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedRecipeId, setSelectedRecipeId] = useState(null);
-
-  const { data: selectedRecipe, isLoading: isRecipeLoading } = useRecipe(selectedRecipeId);
 
   useEffect(() => {
     fetchLikedRecipes();
@@ -22,7 +22,13 @@ export default function User() {
     try {
       const response = await fetch(`/api/v1/likes/user/${user.id}`);
       const data = await response.json();
-      setLikedRecipes(data);
+      const promises: Meal[] = data.map( async (recipe) => {
+      const response = await fetchRecipeById(recipe.recipeId)
+      return response
+      } ) 
+      const fullrecipes = await Promise.all(promises)
+      console.log(fullrecipes)
+      setLikedRecipes(fullrecipes);
     } catch (error) {
       console.error('Error fetching liked recipes:', error);
     } finally {
@@ -38,7 +44,7 @@ export default function User() {
     setSelectedRecipeId(recipeId);
   };
 
-
+  
 
   return (
     <div className="relative max-w-4xl mx-auto bg-[#9E3700] shadow-lg rounded-3xl overflow-hidden">
@@ -78,20 +84,19 @@ export default function User() {
           <div className="grid grid-cols-2 gap-4">
             {likedRecipes.map((recipe) => (
               <div 
-                key={recipe.recipeId} 
+                key={recipe.idMeal} 
                 className="bg-white p-4 rounded-lg shadow-md cursor-pointer"
-                onClick={() => handleRecipeClick(recipe.recipeId)}
+                onClick={() => handleRecipeClick(recipe.idMeal)}
               >
-                <img src={recipe.id} alt={recipe.recipe} className="w-full h-40 object-cover rounded-lg" />
-                <h3 className="text-xl font-semibold mt-2">{recipe.name}</h3>
-                <p className="text-gray-600">{recipe.description}</p>
+                <img src={recipe.strMealThumb} alt={recipe.strMeal} className="w-full h-40 object-cover rounded-lg" />
+                <h3 className="text-xl font-semibold mt-2">{recipe.strMeal}</h3>
               </div>
             ))}
           </div>
         )}
 
         {!isLoading && likedRecipes.length === 0 && (
-          <p className="text-white">You haven't liked any recipes yet.</p>
+          <p className="text-white">You havent liked any recipes yet.</p>
         )}
       </div>
 
