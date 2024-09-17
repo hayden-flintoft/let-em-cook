@@ -1,12 +1,12 @@
 import { useEffect, useRef } from 'react'
-import RandomRecipeButton from './RandomRecipeButton' // Import RandomRecipeButton
+import RandomRecipeButton from './RandomRecipeButton'
 
 interface CarouselProps {
   options: string[]
   selectedOption: string | null
   onOptionSelect: (option: string, type: 'category' | 'cuisine') => void
   isCuisine: (option: string) => boolean
-  onRandomRecipeClick: () => void // Add prop to handle random recipe button click
+  onRandomRecipeClick: () => void
 }
 
 export default function Carousel({
@@ -21,15 +21,17 @@ export default function Carousel({
   useEffect(() => {
     const scrollInterval = setInterval(() => {
       if (carouselRef.current) {
-        carouselRef.current.scrollLeft += 1 // Adjust the speed
-        if (
-          carouselRef.current.scrollLeft >=
-          carouselRef.current.scrollWidth / 2
-        ) {
-          carouselRef.current.scrollLeft = 0 // Reset scroll to the beginning
+        const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current
+
+        // Increment the scroll position
+        carouselRef.current.scrollLeft += 1
+
+        // If scrollLeft reaches half the scrollWidth (the end of the first set), reset it to the start
+        if (scrollLeft >= scrollWidth / 2) {
+          carouselRef.current.scrollLeft = 0
         }
       }
-    }, 50) // Speed of the scroll
+    }, 50) // Adjust the scroll speed as needed
 
     return () => clearInterval(scrollInterval) // Clean up the interval
   }, [])
@@ -37,9 +39,10 @@ export default function Carousel({
   return (
     <div
       ref={carouselRef}
-      className="no-scrollbar flex overflow-x-auto whitespace-nowrap px-2 pb-4 md:px-4" // Added padding-bottom
+      className="no-scrollbar flex overflow-x-auto whitespace-nowrap px-2 pb-4 md:px-4"
     >
-      {options.map((option, index) => (
+      {/* Duplicate the options to create the infinite scroll effect */}
+      {[...options, ...options].map((option, index) => (
         <div
           key={`${option}-${index}`}
           className={`mx-2 flex min-w-[100px] cursor-pointer flex-col items-center md:mx-4 md:min-w-[150px] ${
