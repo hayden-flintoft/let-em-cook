@@ -19,9 +19,9 @@ export default function Layout() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="container mx-auto flex-grow bg-slate-50 p-4">
+      <main className="container mx-auto flex-grow p-4">
         {/* Pass the contextValue via the Outlet */}
         <Outlet context={contextValue} />
       </main>
