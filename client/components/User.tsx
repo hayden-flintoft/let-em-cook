@@ -3,6 +3,7 @@ import { useClerk, useUser } from '@clerk/clerk-react';
 import { Heart } from 'lucide-react';
 import { fetchRecipeById } from '@/api/recipes';
 import { Meal } from 'models/meals';
+import { AuroraBackground } from './ui/aurora-background';
 
 
 export default function User() {
@@ -47,6 +48,7 @@ export default function User() {
   
 
   return (
+    <>
     <div className="relative max-w-4xl mx-auto bg-[#9E3700] shadow-lg rounded-3xl overflow-hidden">
       <div className="p-6">
         <h1 className="text-4xl font-bold text-white mb-6">Profile</h1>
@@ -85,11 +87,11 @@ export default function User() {
             {likedRecipes.map((recipe) => (
               <div 
                 key={recipe.idMeal} 
-                className="bg-white p-4 rounded-lg shadow-md cursor-pointer"
+                className="bg-white p-4 rounded-3xl shadow-md cursor-pointer"
                 onClick={() => handleRecipeClick(recipe.idMeal)}
               >
-                <img src={recipe.strMealThumb} alt={recipe.strMeal} className="w-full h-40 object-cover rounded-lg" />
-                <h3 className="text-xl font-semibold mt-2">{recipe.strMeal}</h3>
+                <img src={recipe.strMealThumb} alt={recipe.strMeal} className="w-full h-40 object-cover rounded-3xl" />
+                <h3 className="text-xl font-semibold mt-2 text-[#9E3700]">{recipe.strMeal}</h3>
               </div>
             ))}
           </div>
@@ -123,5 +125,5 @@ export default function User() {
         </div>
       )}
     </div>
-  );
+    </> );
 }
