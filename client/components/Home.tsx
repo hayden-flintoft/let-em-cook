@@ -65,9 +65,9 @@ export default function Home() {
       </div>
 
       {/* Carousel Component */}
-      <section>
+      <section className="">
         <img
-          className="mb-10 mt-20"
+          className="mx-auto mb-10 mt-20"
           src="images/categories-cuisines.png"
           alt="Title"
         />
@@ -82,8 +82,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Recipes List Component */}
-      {selectedOption && <RecipesList recipes={recipes} isFetching={loading} />}
+      <section>
+        {/* Recipes List Component */}
+        <h3 className="mb-10 mt-20 text-center text-3xl font-bold text-[#9E3700]">
+          {selectedOption} {isCuisine ? 'Cuisine' : 'Category'} Recipes
+        </h3>
+        {selectedOption && (
+          <RecipesList recipes={recipes} isFetching={loading} />
+        )}
+      </section>
     </div>
   )
 }
