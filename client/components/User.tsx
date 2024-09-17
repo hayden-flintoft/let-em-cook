@@ -36,11 +36,7 @@ export default function User() {
         <h1 className="text-4xl font-bold text-white mb-6">Profile</h1>
         <div className="flex items-center mb-6">
           <div className="w-24 h-24 bg-[#9E3700] rounded-3xl flex items-center border-5 border-white justify-center text-white text-4xl font-bold mr-4">
-          <img
-                  src="images/Untitled design (1).png"
-                  alt="Chef Icon"
-                />
-  
+            <img src="images/Untitled design (1).png" alt="Chef Icon" />
           </div>
           <div>
             <h2 className="text-3xl font-semibold text-white">{user?.firstName}</h2>
@@ -62,12 +58,10 @@ export default function User() {
           </button>
         </div>
       </div>
-      
+
       {/* Horizontal line */}
       <div className="border-b border-white w-full relative z-10"></div>
-      
-      {/* Image absolutely centered */}
-      
+
       {/* Liked recipes */}
       <div className="p-6 z-10 relative">
         {isLoading ? (
@@ -75,15 +69,20 @@ export default function User() {
         ) : (
           <div className="grid grid-cols-2 gap-4">
             {likedRecipes.map((recipe) => (
-              <p key={recipe.recipeId} className="text-white">{recipe.recipeId}</p>
+              <div key={recipe.recipeId} className="bg-white p-4 rounded-lg shadow-md">
+                <img src={recipe.image} alt={recipe.name} className="w-full h-40 object-cover rounded-lg" />
+                <h3 className="text-xl font-semibold mt-2">{recipe.name}</h3>
+                <p className="text-gray-600">{recipe.description}</p>
+                {/* You can add more details like ingredients, cooking time, etc. */}
+              </div>
             ))}
           </div>
         )}
-        
+
         {!isLoading && likedRecipes.length === 0 && (
           <p className="text-white">You haven't liked any recipes yet.</p>
         )}
       </div>
     </div>
-  )};
-  
+  );
+}
