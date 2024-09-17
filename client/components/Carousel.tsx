@@ -21,7 +21,7 @@ export default function Carousel({
   useEffect(() => {
     const scrollInterval = setInterval(() => {
       if (carouselRef.current) {
-        carouselRef.current.scrollLeft += 1 // Adjust the speed as needed
+        carouselRef.current.scrollLeft += 1 // Adjust the speed
         if (
           carouselRef.current.scrollLeft >=
           carouselRef.current.scrollWidth / 2
@@ -29,7 +29,7 @@ export default function Carousel({
           carouselRef.current.scrollLeft = 0 // Reset scroll to the beginning
         }
       }
-    }, 20) // Speed of the scroll
+    }, 50) // Speed of the scroll
 
     return () => clearInterval(scrollInterval) // Clean up the interval
   }, [])
@@ -43,7 +43,9 @@ export default function Carousel({
         <div
           key={`${option}-${index}`}
           className={`mx-2 flex min-w-[100px] cursor-pointer flex-col items-center md:mx-4 md:min-w-[150px] ${
-            option === selectedOption ? '' : ''
+            option === selectedOption
+              ? ''
+              : ''
           }`}
           onClick={() =>
             onOptionSelect(option, isCuisine(option) ? 'cuisine' : 'category')
@@ -52,7 +54,7 @@ export default function Carousel({
           <img
             src={`images/${option.toLowerCase()}.svg`}
             alt={option}
-            className={`mb-2 h-12 w-12 object-cover md:h-16 md:w-16 ${
+            className={`mb-2 h-12 w-12 object-cover md:h-16 md:w-16${
               option === selectedOption ? '' : ''
             }`}
           />
