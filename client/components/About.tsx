@@ -38,7 +38,7 @@ const AboutUs = () => {
      Born from the idea that you can make the most of what you already have, our app helps you transform a few ingredients from your pantry or fridge into a delicious, satisfying meal. How often have you found yourself staring at random ingredients, unsure of what to cook? That is exactly the problem we set out to solve. We understand that not everyone has the time or energy to shop for complex recipes or follow long ingredient lists. With Let &apos;em Cook, we want to make cooking simple, fun, and accessible for everyone, no matter your skill level.
   </p>
 
-  <h2 className="mb-4 text-4xl font-extrabold text-[#9E3700]">
+  <h2 className="mb-6 text-5xl font-bold text-[#9E3700] leading-tight">
     Our Mission
   </h2>
   <p className="mb-10 text-lg text-gray-600">
