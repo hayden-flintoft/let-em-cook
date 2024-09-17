@@ -101,7 +101,7 @@ export default function User() {
       </div>
 
       {selectedRecipeId && (
-        <div className="p-6 bg-white rounded-lg mt-6">
+        <div className="p-6 bg-white rounded-3xl mt-6">
           <h2 className="text-2xl font-bold mb-4">Selected Recipe</h2>
           {isRecipeLoading ? (
             <p>Loading recipe...</p>
@@ -110,13 +110,7 @@ export default function User() {
               <h3 className="text-xl font-semibold">{selectedRecipe.name}</h3>
               <img src={selectedRecipe.image} alt={selectedRecipe.name} className="w-full h-60 object-cover rounded-lg my-4" />
               <p>{selectedRecipe.description}</p>
-              <h4 className="font-semibold mt-4">Ingredients:</h4>
-              <ul className="list-disc pl-5">
-                {selectedRecipe.ingredients.map((ingredient, index) => (
-                  <li key={index}>{ingredient}</li>
-                ))}
-              </ul>
-              <h4 className="font-semibold mt-4">Instructions:</h4>
+
               <ol className="list-decimal pl-5">
                 {selectedRecipe.instructions.map((instruction, index) => (
                   <li key={index}>{instruction}</li>

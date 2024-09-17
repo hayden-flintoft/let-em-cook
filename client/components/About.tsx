@@ -1,3 +1,7 @@
+import { Handshake } from 'lucide-react';
+import { CopyCheck } from 'lucide-react';
+
+
 const teamMembers = [
   {
     name: 'Edward Soung',
@@ -45,12 +49,16 @@ const AboutUs = () => {
     Our mission is to inspire you to use what you have and reduce food waste, all while still enjoying flavorful, home-cooked meals. Whether you are a busy professional, a student, or someone looking to save money by using up ingredients before they spoil, Let &apos;em Cook is here to help you make the most out of every ingredient.
   </p>
 
-  <h2 className="mb-4 text-4xl font-extrabold text-[#9E3700]">
+  <h2 className="mb-6 text-5xl font-bold text-[#9E3700] leading-tight">
     How it Works
   </h2>
-  <p className="mb-10 text-lg text-[#9E3700]">
-    Simply enter the ingredients you have on hand, and we will provide you with quick, easy, and creative meal ideas. The app is designed to be intuitive, offering recipe suggestions that fit your lifestyle—whether you are in the mood for something fast and simple or a bit more adventurous.
+  <p className="mb-10 text-lg text-[#9E3700] font-semibold">
+    <ul>
+      <li>{<Handshake />}Simply enter the ingredients you have on hand, and we will provide you with quick, easy, and creative meal ideas.</li>
+      <li><CopyCheck />The app is designed to be intuitive.</li>
+      </ul> 
   </p>
+  
 </section>
 
 
