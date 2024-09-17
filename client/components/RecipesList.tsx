@@ -14,7 +14,7 @@ const RecipesList: React.FC<RecipesListProps> = ({
 }) => {
   return (
     <div className="flex justify-center">
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 mx-auto">
+      <div className="mx-auto grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {recipes.map((recipe, index) => (
           <div
             key={recipe.idMeal}
@@ -26,8 +26,7 @@ const RecipesList: React.FC<RecipesListProps> = ({
         {isFetching && <div>Loading more...</div>}
       </div>
     </div>
-  );
-  
+  )
 }
 
 export default RecipesList

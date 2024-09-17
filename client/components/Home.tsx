@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { carouselCategories, carouselCuisines } from '../../models/carouselData'
 import { useFetchRecipes } from '@/hooks/useFetchRecipes'
 import Carousel from './Carousel'
-import RecipesList from './RecipesListBrief'
+import RecipesList from './RecipesList'
 
 export default function Home() {
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
@@ -45,7 +45,7 @@ export default function Home() {
   }
 
   return (
-    <div className="px-4 md:px-8 lg:px-16">
+    <div className="container mx-auto p-8">
       {/* Carousel Section */}
       <div className="shadow-neumorph hover:shadow-neumorph-pressed relative mb-8 h-[250px] w-full overflow-hidden rounded-3xl md:h-[400px] lg:h-[500px]">
         <img
@@ -67,10 +67,10 @@ export default function Home() {
       {/* Carousel Component */}
       <section>
         <img
-          className="mt-20 mb-10"
+          className="mb-10 mt-20"
           src="images/categories-cuisines.png"
           alt="Title"
-        ></img>
+        />
         <div className="mb-5">
           <Carousel
             options={allOptions}
@@ -83,14 +83,7 @@ export default function Home() {
       </section>
 
       {/* Recipes List Component */}
-      {selectedOption && (
-        <RecipesList
-          recipes={recipes}
-          loading={loading}
-          selectedOption={selectedOption}
-          isCuisine={isCuisine}
-        />
-      )}
+      {selectedOption && <RecipesList recipes={recipes} isFetching={loading} />}
     </div>
   )
 }
