@@ -34,46 +34,45 @@ export default function Header() {
             className="h-full object-contain"
           />
         </Link>
-        {/* About us */}
-        <Link
-          to="/about"
-          className="h-10 w-40 rounded-3xl bg-[#9E3700] text-center text-3xl font-extrabold text-white focus:outline-none"
-        >
-          <p>About</p>
-        </Link>
+
         {/* Navigation Links */}
-        {/* <span className="text-4xl font-extrabold text-[#9E3700]">
-                Hello, {user?.firstName}
-              </span> */}
-        <Link
-          to="/search"
-          className="h-10 w-40 rounded-3xl bg-[#9E3700] text-center text-3xl font-extrabold text-white focus:outline-none"
-        >
-          <p>Browse</p>
-        </Link>
+        <div className="flex space-x-4">
+          <Link
+            to="/about"
+            className="h-10 w-32 rounded-3xl bg-primary text-center text-lg font-extrabold text-white focus:outline-none"
+          >
+            <p>About</p>
+          </Link>
+          <Link
+            to="/search"
+            className="h-10 w-32 rounded-3xl bg-primary text-center text-lg font-extrabold text-white focus:outline-none"
+          >
+            <p>Browse</p>
+          </Link>
+        </div>
 
         {/* Search Bar */}
-        <form onSubmit={handleSearch} className="mr-4">
+        <form onSubmit={handleSearch} className="flex items-center space-x-2">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search recipes..."
-            className="rounded-full border border-[#9E3700] px-4 py-2 text-[#9E3700]"
+            className="w-full rounded-full border border-primary px-4 py-2 text-primary"
           />
           <button
             type="submit"
-            className="ml-2 h-10 w-20 rounded-full border border-[#9E3700] text-[#9E3700]"
+            className="h-10 w-20 rounded-full bg-primary text-white focus:outline-none"
           >
             Search
           </button>
         </form>
 
-        <div className="flex items-center">
+        <div className="flex items-center space-x-4">
           {!user ? (
             <button
               onClick={handleSignIn}
-              className="h-10 w-40 rounded-3xl bg-[#9E3700] text-3xl font-extrabold text-white focus:outline-none"
+              className="h-10 w-32 rounded-3xl bg-primary text-lg font-extrabold text-white focus:outline-none"
             >
               Sign In
             </button>
@@ -81,14 +80,13 @@ export default function Header() {
             <div className="flex items-center space-x-4">
               <button
                 onClick={handleSignOut}
-                className="h-10 w-40 rounded-3xl bg-[#9E3700] text-xl font-extrabold text-white focus:outline-none"
+                className="h-10 w-32 rounded-3xl bg-primary text-lg font-extrabold text-white focus:outline-none"
               >
                 Sign Out
               </button>
               <Link
                 to="/userprofile"
-                className="rounded-3xl bg-[#9E3700] w-10 h-10 text-white text-center text-4xl font-extrabold"
-
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white"
               >
                  {user?.firstName?.[0]}
 
