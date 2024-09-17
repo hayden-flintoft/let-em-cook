@@ -25,7 +25,7 @@ export default function Header() {
 
   return (
     <header className="mx-[10px] mt-[10px] w-[calc(100%-20px)] rounded-3xl bg-slate-50 p-4 text-[#9E3700]">
-      <div className="container mx-auto flex h-full items-center justify-between">
+      <div className="container mx-auto flex h-full items-end justify-between">
         {/* Logo */}
         <Link to="/">
           <img
@@ -90,12 +90,6 @@ export default function Header() {
                 className="rounded-3xl bg-[#9E3700] w-10 h-10 text-white text-center text-4xl font-extrabold"
 
               >
-                <img
-                  src="/images/chef (1).png"
-                  alt="Chef Icon"
-                  className="rounded-full object-cover"
-                />
-
                  {user?.firstName?.[0]}
 
               </Link>

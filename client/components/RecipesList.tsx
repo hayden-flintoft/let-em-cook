@@ -13,18 +13,21 @@ const RecipesList: React.FC<RecipesListProps> = ({
   isFetching,
 }) => {
   return (
-    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-      {recipes.map((recipe, index) => (
-        <div
-          key={recipe.idMeal}
-          ref={index === recipes.length - 1 ? lastRecipeElementRef : null}
-        >
-          <RecipeListItem recipe={recipe} layout="card" />
-        </div>
-      ))}
-      {isFetching && <div>Loading more...</div>}
+    <div className="flex justify-center">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 mx-auto">
+        {recipes.map((recipe, index) => (
+          <div
+            key={recipe.idMeal}
+            ref={index === recipes.length - 1 ? lastRecipeElementRef : null}
+          >
+            <RecipeListItem recipe={recipe} layout="card" />
+          </div>
+        ))}
+        {isFetching && <div>Loading more...</div>}
+      </div>
     </div>
-  )
+  );
+  
 }
 
 export default RecipesList

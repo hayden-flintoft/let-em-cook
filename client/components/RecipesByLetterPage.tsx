@@ -230,7 +230,7 @@ export default function RecipesByLetterPage() {
   }
 
   if (ingredientsLoading)
-    return <LoadingSpinner size={48} color="text-orange-500" />
+    return <LoadingSpinner size={48} color="text-[#9E3700]" />
   if (ingredientsError) return <div>Error: {ingredientsError.message}</div>
 
   return (
@@ -247,11 +247,14 @@ export default function RecipesByLetterPage() {
         handleCategoryChange={handleCategoryChange}
         handleClearParameters={handleClearParameters}
       />
-
-      <h2 className="mb-8 text-4xl font-bold text-black">Recipes</h2>
+      <br></br>
+      
+      <img className="mx-auto w-40" src="images/recipes.png" alt="Title"></img>
+  
+      <br></br>
 
       {noRecipesFound && !resultsFound ? (
-        <div className="text-center text-xl text-red-500">
+        <div className="text-center text-xl text-[#9E3700]">
           No recipes found with the current filters.
         </div>
       ) : (
