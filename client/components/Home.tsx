@@ -58,9 +58,7 @@ export default function Home() {
             <h2 className="text-xl font-bold text-white md:text-4xl lg:text-6xl">
               &apos;I have nothing to eat&apos;,
               <br />
-              <span className="text-[#FFB649]">
-                is just an unwritten recipe
-              </span>
+              <span className="text-accent">is just an unwritten recipe</span>
             </h2>
           </div>
         </div>
