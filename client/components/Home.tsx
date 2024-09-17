@@ -66,15 +66,20 @@ export default function Home() {
 
       {/* Carousel Component */}
       <section>
-        <img src="images/categories-cuisines.png" alt="Title"></img>
-        <br></br>
-        <Carousel
-          options={allOptions}
-          selectedOption={selectedOption}
-          onOptionSelect={handleOptionSelect}
-          isCuisine={(option) => carouselCuisines.includes(option)}
-          onRandomRecipeClick={fetchRandomRecipe} // Pass the function to Carousel
-        />
+        <img
+          className="mt-20 mb-10"
+          src="images/categories-cuisines.png"
+          alt="Title"
+        ></img>
+        <div className="mb-5">
+          <Carousel
+            options={allOptions}
+            selectedOption={selectedOption}
+            onOptionSelect={handleOptionSelect}
+            isCuisine={(option) => carouselCuisines.includes(option)}
+            onRandomRecipeClick={fetchRandomRecipe} // Pass the function to Carousel
+          />
+        </div>
       </section>
 
       {/* Recipes List Component */}

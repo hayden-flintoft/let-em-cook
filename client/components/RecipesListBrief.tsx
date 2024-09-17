@@ -16,7 +16,7 @@ export default function RecipesList({
   return (
     <section>
       <br></br>
-      <h3 className="mb-4 mt-8 text-center text-3xl font-bold text-[#9E3700]">
+      <h3 className="mb-4 mt-8 text-3xl font-bold text-[#9E3700]">
         {selectedOption} {isCuisine ? 'Cuisine' : 'Category'} Recipes
       </h3>
 
