@@ -46,6 +46,8 @@ export default function Carousel({
             onOptionSelect(option, isCuisine(option) ? 'cuisine' : 'category')
           }
         >
+          <br></br>
+    <br></br>
           {/* Convert the option to lowercase when constructing the image source */}
           <img
             src={`images/${option.toLowerCase()}.png`}

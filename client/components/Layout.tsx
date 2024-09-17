@@ -25,7 +25,7 @@ export default function Layout() {
         {/* Pass the contextValue via the Outlet */}
         <Outlet context={contextValue} />
       </main>
-      <footer className="bg-gray-800 p-4 text-center text-white">
+      <footer className="bg-[#9E3700] p-10 text-center text-xl font-extrabold text-white">
         © 2024 Letemcook. All rights reserved.
       </footer>
     </div>
