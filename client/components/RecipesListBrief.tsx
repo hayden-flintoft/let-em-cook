@@ -15,7 +15,9 @@ export default function RecipesList({
 }: RecipesListProps) {
   return (
     <section>
+
       <h3 className="mb-4 mt-8 text-lg font-semibold md:text-2xl">
+
         {selectedOption} {isCuisine ? 'Cuisine' : 'Category'} Recipes
       </h3>
       {loading ? (
@@ -27,6 +29,7 @@ export default function RecipesList({
               key={recipe.idMeal}
               to={`/recipe/${recipe.idMeal}`}
               className="shadow-neumorph hover:shadow-neumorph-pressed flex flex-col items-center rounded-lg p-4"
+
             >
               <img
                 src={recipe.strMealThumb}

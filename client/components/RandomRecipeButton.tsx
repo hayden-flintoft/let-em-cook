@@ -6,6 +6,8 @@ export default function RandomRecipeButton({
   onClick,
 }: RandomRecipeButtonProps) {
   return (
+    <>
+    <br></br>
     <div
       className="mx-4 flex min-w-[150px] cursor-pointer flex-col items-center"
       onClick={onClick}
@@ -17,5 +19,8 @@ export default function RandomRecipeButton({
       />
       <span className="text-sm">Random Recipe</span>
     </div>
+    
+    
+    </>
   )
 }

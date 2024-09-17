@@ -34,14 +34,22 @@ export default function Header() {
             className="h-full object-contain"
           />
         </Link>
-
+        {/* About us */}
+        <Link
+          to="/about"
+          className="h-10 w-40 rounded-3xl bg-[#9E3700] text-center text-3xl font-extrabold text-white focus:outline-none"
+        >
+          <p>About</p>
+        </Link>
         {/* Navigation Links */}
         {/* <span className="text-4xl font-extrabold text-[#9E3700]">
                 Hello, {user?.firstName}
               </span> */}
-        <Link to="/search"
-        className="rounded-3xl bg-[#9E3700]  w-40 h-10  text-3xl font-extrabold text-white focus:outline-none text-center">
-          <p>Browse</p> 
+        <Link
+          to="/search"
+          className="h-10 w-40 rounded-3xl bg-[#9E3700] text-center text-3xl font-extrabold text-white focus:outline-none"
+        >
+          <p>Browse</p>
         </Link>
 
         {/* Search Bar */}
@@ -55,7 +63,7 @@ export default function Header() {
           />
           <button
             type="submit"
-            className="ml-2 rounded-full h-10 w-20 border border-[#9E3700] text-[#9E3700] "
+            className="ml-2 h-10 w-20 rounded-full border border-[#9E3700] text-[#9E3700]"
           >
             Search
           </button>
@@ -65,7 +73,7 @@ export default function Header() {
           {!user ? (
             <button
               onClick={handleSignIn}
-              className="rounded-3xl bg-[#9E3700]  w-40 h-10  text-3xl font-extrabold text-white focus:outline-none"
+              className="h-10 w-40 rounded-3xl bg-[#9E3700] text-3xl font-extrabold text-white focus:outline-none"
             >
               Sign In
             </button>
@@ -73,19 +81,24 @@ export default function Header() {
             <div className="flex items-center space-x-4">
               <button
                 onClick={handleSignOut}
-                className="rounded-3xl bg-[#9E3700] w-40 h-10  text-xl font-extrabold text-white focus:outline-none"
+                className="h-10 w-40 rounded-3xl bg-[#9E3700] text-xl font-extrabold text-white focus:outline-none"
               >
                 Sign Out
               </button>
               <Link
                 to="/userprofile"
-                className="rounded-3xl bg-[#9E3700] w-10 h-10 "
+
+                className="h-10 w-10 rounded-3xl bg-[#9E3700]"
+                className="rounded-3xl bg-[#9E3700] w-10 h-10 text-white text-center "
               >
                 <img
                   src="/images/chef (1).png"
                   alt="Chef Icon"
                   className="rounded-full object-cover"
                 />
+
+                 {user?.firstName?.[0]}
+
               </Link>
             </div>
           )}

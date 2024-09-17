@@ -4,20 +4,18 @@ import { Heart } from 'lucide-react'
 import AddComment from './CommentForm'
 import { useUser } from '@clerk/clerk-react'
 import { Comment } from 'models/comments'
+import Like from './LikeButton'
 
 export default function RecipePage() {
   const { id } = useParams<{ id: string }>()
   const [meal, setMeal] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [comments, setComments] = useState<Comment[]>([])
-  const [liked, setLiked] = useState(false)
-  const [heartCount, setHeartCount] = useState(0)
   const {user} = useUser()
 
   useEffect(() => {
     if (id) {
       fetchMealById(id)
-      fetchLikeStatus(id)
       fetchComments(id)
     }
   }, [id])
@@ -37,17 +35,6 @@ export default function RecipePage() {
     }
   }
 
-  const fetchLikeStatus = async (mealId: string) => {
-    try {
-      const response = await fetch(`/api/likes/${mealId}`)
-      const data = await response.json()
-      setLiked(data.isLiked)
-      setHeartCount(data.likeCount)
-    } catch (error) {
-      console.error('Error fetching like status:', error)
-    }
-  }
-
   const fetchComments = async (mealId: string) => {
     try {
       const response = await fetch(`/api/v1/comments/recipes/${mealId}`)
@@ -60,21 +47,6 @@ export default function RecipePage() {
     }
   }
 
-  const handleToggleLike = async () => {
-    try {
-      const response = await fetch(`/api/likes/${id}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isLiked: !liked }),
-      })
-      const data = await response.json()
-      setLiked(data.isLiked)
-      setHeartCount(data.likeCount)
-    } catch (error) {
-      console.error('Error toggling like:', error)
-    }
-  }
-
   if (loading) return <div>Loading...</div>
 
   if (!meal) return <div>Recipe not found.</div>
@@ -82,17 +54,12 @@ export default function RecipePage() {
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="shadow-neumorph hover:shadow-neumorph-pressed relative w-[60%] max-w-[1000px] rounded-3xl p-20 shadow-lg">
-        <button
-          onClick={handleToggleLike}
-          className={`absolute right-4 top-4 rounded-full p-2 ${liked ? 'text-red-500' : 'text-gray-500'} transition-colors hover:text-red-700`}
-        >
-          <Heart className="h-12 w-12" />
-        </button>
         <div>
           <h2 className="text-3xl font-extrabold tracking-tight text-[#9E3700]">
             {meal.strMeal}
           </h2>
           <br />
+          <Like recipeId={id}/>
         </div>
         <div>
           <div className="grid w-full items-center gap-4">
@@ -159,8 +126,8 @@ export default function RecipePage() {
                   <h3 className="text-xl font-bold text-[#9E3700]">Comments:</h3>
                   <ul className="space-y-2">
                     {comments.map((comment, index) => (
-                      <li key={index} className="rounded-lg bg-gray-100 p-2">{comment.username}:  
-                         {comment.comment}
+                      <li key={index} className="rounded-lg bg-gray-100 p-2">`${comment.username} :   
+                         ${comment.comment}`
                       </li>
                     ))}
                   </ul>
