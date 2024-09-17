@@ -21,7 +21,7 @@ export default function Carousel({
   useEffect(() => {
     const scrollInterval = setInterval(() => {
       if (carouselRef.current) {
-        carouselRef.current.scrollLeft += 1 // Adjust the speed
+        carouselRef.current.scrollLeft += 1 // Adjust the auto scroll speed
         if (
           carouselRef.current.scrollLeft >=
           carouselRef.current.scrollWidth / 2

@@ -87,8 +87,7 @@ export default function Header() {
               </button>
               <Link
                 to="/userprofile"
-                className="rounded-3xl bg-[#9E3700] w-10 h-10 text-white text-center text-4xl font-extrabold"
-
+                className="h-10 w-10 rounded-3xl bg-[#9E3700] text-center text-4xl font-extrabold text-white"
               >
                 <img
                   src="/images/chef (1).png"
@@ -96,8 +95,7 @@ export default function Header() {
                   className="rounded-full object-cover"
                 />
 
-                 {user?.firstName?.[0]}
-
+                {user?.firstName?.[0]}
               </Link>
             </div>
           )}
