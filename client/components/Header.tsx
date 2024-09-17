@@ -61,7 +61,7 @@ export default function Header() {
           </button>
         </form>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center">
           {!user ? (
             <button
               onClick={handleSignIn}
@@ -79,7 +79,7 @@ export default function Header() {
               </button>
               <Link
                 to="/userprofile"
-                className="rounded-3xl bg-[#9E3700] w-10 h-10 text-white text-center "
+                className="rounded-3xl bg-[#9E3700] w-10 h-10 text-white text-center text-4xl font-extrabold"
               >
                  {user?.firstName?.[0]}
               </Link>
