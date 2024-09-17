@@ -15,27 +15,30 @@ export default function RecipesList({
 }: RecipesListProps) {
   return (
     <section>
-      <br></br>
-      <br></br>
-      <h3 className="mb-4 mt-8 text-3xl font-semibold text-[#9E3700]">
+
+      <h3 className="mb-4 mt-8 text-lg font-semibold md:text-2xl">
+
         {selectedOption} {isCuisine ? 'Cuisine' : 'Category'} Recipes
       </h3>
       {loading ? (
         <div>Loading...</div>
       ) : recipes.length > 0 ? (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
           {recipes.map((recipe) => (
             <Link
               key={recipe.idMeal}
-              to={`/recipe/${recipe.idMeal}`} // Navigate to the recipe page
-              className="shadow-neumorph hover:shadow-neumorph-pressed flex flex-col items-center rounded-3xl p-4"
+              to={`/recipe/${recipe.idMeal}`}
+              className="shadow-neumorph hover:shadow-neumorph-pressed flex flex-col items-center rounded-lg p-4"
+
             >
               <img
                 src={recipe.strMealThumb}
                 alt={recipe.strMeal}
-                className="mb-2 h-32 w-32 rounded-full object-cover"
+                className="mb-2 h-20 w-20 rounded-full object-cover md:h-32 md:w-32"
               />
-              <span className="text-lg font-semibold">{recipe.strMeal}</span>
+              <span className="text-base font-semibold md:text-lg">
+                {recipe.strMeal}
+              </span>
             </Link>
           ))}
         </div>

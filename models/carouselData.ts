@@ -5,7 +5,7 @@ export const carouselCategories = [
   'Dessert',
   'Goat',
   'Lamb',
-  'Miscellaneous',
+  // 'Miscellaneous',
   'Pasta',
   'Pork',
   'Seafood',

@@ -1,10 +1,12 @@
 import { useEffect, useRef } from 'react'
+import RandomRecipeButton from './RandomRecipeButton' // Import RandomRecipeButton
 
 interface CarouselProps {
   options: string[]
   selectedOption: string | null
   onOptionSelect: (option: string, type: 'category' | 'cuisine') => void
   isCuisine: (option: string) => boolean
+  onRandomRecipeClick: () => void // Add prop to handle random recipe button click
 }
 
 export default function Carousel({
@@ -12,13 +14,14 @@ export default function Carousel({
   selectedOption,
   onOptionSelect,
   isCuisine,
+  onRandomRecipeClick,
 }: CarouselProps) {
   const carouselRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const scrollInterval = setInterval(() => {
       if (carouselRef.current) {
-        carouselRef.current.scrollLeft += 1 // Adjust the speed as needed
+        carouselRef.current.scrollLeft += 1 // Adjust the speed
         if (
           carouselRef.current.scrollLeft >=
           carouselRef.current.scrollWidth / 2
@@ -26,7 +29,7 @@ export default function Carousel({
           carouselRef.current.scrollLeft = 0 // Reset scroll to the beginning
         }
       }
-    }, 1) // Speed of the scroll
+    }, 50) // Speed of the scroll
 
     return () => clearInterval(scrollInterval) // Clean up the interval
   }, [])
@@ -34,33 +37,39 @@ export default function Carousel({
   return (
     <div
       ref={carouselRef}
-      className="no-scrollbar flex overflow-x-auto whitespace-nowrap"
+      className="no-scrollbar flex overflow-x-auto whitespace-nowrap px-2 md:px-4"
     >
       {options.map((option, index) => (
         <div
           key={`${option}-${index}`}
-          className={`mx-4 flex min-w-[150px] cursor-pointer flex-col items-center ${
-            option === selectedOption ? 'border-b-4 border-yellow-500' : ''
+          className={`mx-2 flex min-w-[100px] cursor-pointer flex-col items-center md:mx-4 md:min-w-[150px] ${
+            option === selectedOption
+              ? ''
+              : ''
           }`}
           onClick={() =>
             onOptionSelect(option, isCuisine(option) ? 'cuisine' : 'category')
           }
         >
-          <br></br>
-    <br></br>
-          {/* Convert the option to lowercase when constructing the image source */}
           <img
-            src={`images/${option.toLowerCase()}.png`}
+            src={`/images/${option.toLowerCase()}.svg`}
             alt={option}
-            className={`mb-2 h-16 w-16 rounded-full object-cover ${option === selectedOption ? 'ring-2 ring-yellow-500' : ''}`}
+            className={`mb-2 h-12 w-12 object-cover md:h-16 md:w-16${
+              option === selectedOption ? '' : ''
+            }`}
           />
           <span
-            className={`text-sm ${option === selectedOption ? 'font-bold text-yellow-500' : ''}`}
+            className={`text-sm md:text-base ${
+              option === selectedOption ? 'font-bold text-yellow-500' : ''
+            }`}
           >
             {option}
           </span>
         </div>
       ))}
+
+      {/* Random Recipe Button added to the end of the carousel */}
+      <RandomRecipeButton onClick={onRandomRecipeClick} />
     </div>
   )
 }

@@ -66,7 +66,7 @@ const SearchHeader: React.FC<SearchHeaderProps> = ({
       style={{ height: '400px' }}
     >
       <img
-        src="images/toys1.png"
+        src="/images/toys1.png"
         alt="Various delicious meals"
         className="absolute inset-0 h-full w-full object-cover rounded-3xl"
       />
