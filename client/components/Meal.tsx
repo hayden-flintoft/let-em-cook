@@ -50,8 +50,8 @@ export default function RecipePage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="shadow-neumorph hover:shadow-neumorph-pressed relative w-full max-w-4xl rounded-3xl p-6 md:p-10">
-        <h2 className="mb-4 text-3xl font-extrabold tracking-tight text-primary">
+      <div className="relative w-full max-w-4xl rounded-3xl p-6 shadow-neumorph hover:shadow-neumorph-pressed md:p-10">
+        <h2 className="mb-4 text-3xl font-extrabold tracking-tight text-[#9E3700]">
           {meal.strMeal}
         </h2>
 
@@ -64,18 +64,9 @@ export default function RecipePage() {
             alt={meal.strMeal}
             className="mx-auto w-[100%] rounded-3xl object-cover md:w-[70%] lg:w-[60%]"
           />
-
-          {/* Instructions */}
-          <section>
-            <h3 className="mb-2 text-2xl font-bold text-primary">
-              Step by step!
-            </h3>
-            <p className="text-primary-light text-lg">{meal.strInstructions}</p>
-          </section>
-
           {/* Ingredients List */}
           <section>
-            <h3 className="mb-2 text-2xl font-bold text-primary">
+            <h3 className="mb-2 text-2xl font-bold text-[#9E3700]">
               Ingredients!
             </h3>
             <div className="container mx-auto p-4">
@@ -99,11 +90,18 @@ export default function RecipePage() {
               })}
             </div>
           </section>
+          {/* Instructions */}
+          <section>
+            <h3 className="mb-2 text-2xl font-bold text-[#9E3700]">
+              Step by step!
+            </h3>
+            <p className="text-primary-light text-lg">{meal.strInstructions}</p>
+          </section>
 
           {/* YouTube Video */}
           {meal.strYoutube && (
             <section>
-              <h3 className="mb-2 text-2xl font-bold text-primary">
+              <h3 className="mb-2 text-2xl font-bold text-[#9E3700]">
                 Watch how to make it
               </h3>
               <div className="flex justify-center">
@@ -124,13 +122,18 @@ export default function RecipePage() {
           <section>
             <AddComment setComments={setComments} comments={comments} />
             <div className="mt-6">
-              <h3 className="mb-2 text-xl font-bold text-primary">Comments:</h3>
+              <h3 className="mb-2 text-xl font-bold text-[#9E3700]">
+                Comments:
+              </h3>
               <ul className="space-y-2">
                 {comments.length > 0 ? (
                   comments.map((comment, index) => (
                     <li key={index} className="rounded-lg bg-gray-100 p-2">
                       <p>
-                        <strong>{comment.username}:</strong> {comment.comment}
+                        <strong className="text-[#9E3700]">
+                          {comment.username}:
+                        </strong>{' '}
+                        {comment.comment}
                       </p>
                     </li>
                   ))
