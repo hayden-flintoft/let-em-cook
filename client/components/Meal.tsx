@@ -10,7 +10,7 @@ export default function RecipePage() {
   const [meal, setMeal] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [comments, setComments] = useState<Comment[]>([])
-  const [showVideo, setShowVideo] = useState(false) // Start with video hidden
+  const [showVideo, setShowVideo] = useState(false)
   const { user } = useUser()
 
   useEffect(() => {
@@ -31,9 +31,8 @@ export default function RecipePage() {
       const mealData = data.meals[0]
       setMeal(mealData)
 
-      // Check if YouTube video is available after meal is set
       if (mealData.strYoutube) {
-        checkVideoAvailability(mealData.strYoutube.split('=')[1]) // Extract YouTube video ID
+        checkVideoAvailability(mealData.strYoutube.split('=')[1])
       }
     } catch (error) {
       console.error('Error fetching meal details:', error)
@@ -52,18 +51,17 @@ export default function RecipePage() {
     }
   }
 
-  // Check YouTube video availability
   const checkVideoAvailability = async (videoId: string) => {
     try {
       const response = await fetch(
         `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`,
       )
       if (response.ok) {
-        setShowVideo(true) // Only show video if it's available
+        setShowVideo(true)
       }
     } catch (error) {
       console.error('Error checking YouTube video availability:', error)
-      setShowVideo(false) // In case of any error, hide the video
+      setShowVideo(false)
     }
   }
 
@@ -73,8 +71,8 @@ export default function RecipePage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="shadow-neumorph relative w-full max-w-4xl rounded-3xl md:p-10">
-        <h2 className="mb-10 text-center text-3xl font-extrabold tracking-tight text-[#9E3700]">
+      <div className="shadow-neumorph relative w-full max-w-4xl rounded-3xl bg-white p-8 md:p-10">
+        <h2 className="mb-10 text-center text-4xl font-extrabold tracking-tight text-[#9E3700]">
           {meal.strMeal}
         </h2>
 
@@ -87,10 +85,11 @@ export default function RecipePage() {
             alt={meal.strMeal}
             className="mx-auto w-[100%] rounded-3xl object-cover md:w-[70%] lg:w-[60%]"
           />
-          {/* Ingredients List */}
+          <hr className="my-4 border-t-2 border-[#9E3700]" />
+          {/* Ingredients List with Checkboxes */}
           <section>
-            <h3 className="mb-5 mt-10 text-2xl font-bold text-[#9E3700]">
-              Ingredients!
+            <h3 className="mb-5 mt-10 text-3xl font-bold text-[#9E3700]">
+              Ingredients
             </h3>
             <div className="container mx-auto p-4">
               {Array.from({ length: 20 }, (_, index) => {
@@ -113,21 +112,35 @@ export default function RecipePage() {
               })}
             </div>
           </section>
-          {/* Instructions */}
+
+          <hr className="my-4 border-t-2 border-[#9E3700]" />
+
+          {/* Instructions with Step Numbers in Orange */}
           <section>
-            <h3 className="mb-5 text-2xl font-bold text-[#9E3700]">
-              Step by step!
+            <h3 className="mb-5 text-3xl font-bold text-[#9E3700]">
+              Instructions
             </h3>
-            <p className="text-primary-light text-lg">{meal.strInstructions}</p>
+            <div className="text-primary-light space-y-4 text-lg">
+              {meal.strInstructions
+                .split('\r\n')
+                .filter((step) => step.trim() !== '') // Filter out empty or whitespace steps
+                .map((step, index) => (
+                  <p key={index}>
+                    <span className="font-semibold text-[#9E3700]">
+                      Step {index + 1}:
+                    </span>{' '}
+                    {step}
+                  </p>
+                ))}
+            </div>
           </section>
 
-          {/* Conditionally render the heading and video */}
           {meal.strYoutube && showVideo && (
             <>
-              <p className="scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]">
-                Watch how to make it
-              </p>
-              <br />
+              <hr className="my-4 border-t-2 border-[#9E3700]" />
+              <h3 className="mb-4 scroll-m-20 text-3xl font-extrabold tracking-tight text-[#9E3700]">
+                Watch How to Make It
+              </h3>
               <div className="flex justify-center">
                 <iframe
                   width="560"
