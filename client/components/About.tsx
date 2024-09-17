@@ -6,25 +6,25 @@ const teamMembers = [
   {
     name: 'Edward Soung',
     role: 'Product Owner',
-    img: 'images/Eddie.png',
+    img: '/images/Eddie.png',
     GitHub: 'https://github.com/EddieWeddie11',
   },
   {
     name: 'Hayden Flintoft',
     role: 'Product Owner / Backend Engineer',
-    img: 'images/Hayden.png',
+    img: '/images/Hayden.png',
     GitHub: 'https://github.com/hayden-flintoft',
   },
   {
     name: 'Edward Rainger',
     role: 'Frontend Engineer',
-    img: 'images/Ted.png',
+    img: '/images/Ted.png',
     GitHub: 'https://github.com/edward-rainger',
   },
   {
     name: 'Karl Bloomfield',
     role: 'Backend Engineer',
-    img: 'images/Karl.png',
+    img: '/images/Karl.png',
     GitHub: 'https://github.com/karl-bloomfield',
   },
 ]
@@ -67,6 +67,17 @@ const AboutUs = () => {
   
 </section>
 
+        <h2 className="mb-4 text-4xl font-extrabold text-[#9E3700]">
+          How it Works
+        </h2>
+        <p className="mb-10 text-lg text-[#9E3700]">
+          Simply enter the ingredients you have on hand, and we will provide you
+          with quick, easy, and creative meal ideas. The app is designed to be
+          intuitive, offering recipe suggestions that fit your lifestyle—whether
+          you are in the mood for something fast and simple or a bit more
+          adventurous.
+        </p>
+      </section>
 
       {/* All Members Section */}
       <section className="all-members text-center">
