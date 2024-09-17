@@ -82,7 +82,7 @@ export default function Header() {
                 className="rounded-3xl bg-[#9E3700] w-10 h-10 "
               >
                 <img
-                  src="images/chef (1).png"
+                  src="/images/chef (1).png"
                   alt="Chef Icon"
                   className="rounded-full object-cover"
                 />

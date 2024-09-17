@@ -52,7 +52,7 @@ export default function Carousel({
           }
         >
           <img
-            src={`images/${option.toLowerCase()}.svg`}
+            src={`/images/${option.toLowerCase()}.svg`}
             alt={option}
             className={`mb-2 h-12 w-12 object-cover md:h-16 md:w-16${
               option === selectedOption ? '' : ''
