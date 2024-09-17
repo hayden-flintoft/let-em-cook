@@ -8,8 +8,7 @@ import router from './routes'
 const queryClient = new QueryClient()
 
 // Import your publishable key
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
-console.log('Pub Key:', import.meta.env.VITE_CLERK_PUBLISHABLE_KEY)
+const PUBLISHABLE_KEY = 'pk_live_Y2xlcmsubGV0LWVtLWNvb2sucHVzaGVkLm56JA'
 
 if (!PUBLISHABLE_KEY) {
   throw new Error('Missing Publishable Key')
