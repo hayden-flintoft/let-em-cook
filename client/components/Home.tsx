@@ -88,7 +88,10 @@ export default function Home() {
           {selectedOption} {isCuisine ? 'Cuisine' : 'Category'} Recipes
         </h3>
         {selectedOption && (
-          <RecipesList recipes={recipes} isFetching={loading} />
+          <RecipesList
+            recipes={recipes} // Ensure recipes contains strArea and strCategory
+            isFetching={loading}
+          />
         )}
       </section>
     </div>

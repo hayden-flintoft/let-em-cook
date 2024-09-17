@@ -5,8 +5,8 @@ interface Recipe {
   idMeal: string
   strMeal: string
   strMealThumb: string
-  strCategory: string
-  strArea: string
+  strCategory: string | null // Allow for the possibility of null
+  strArea: string | null // Allow for the possibility of null
   strInstructions: string
   [key: string]: any
 }
@@ -45,26 +45,30 @@ const RecipeListItem: React.FC<RecipeListItemProps> = ({
           {recipe.strMeal}
         </h4>
 
-        {/* Display Area (Cuisine) */}
-        <p className="mb-2 flex items-center text-sm text-gray-600">
-          <img
-            src={`/images/${recipe.strArea?.toLowerCase()}.svg`}
-            alt={recipe.strArea}
-            className="mr-2 h-8 w-8"
-          />
-          {recipe.strArea}
-        </p>
-
-        <div className="flex items-center justify-between text-sm text-gray-600">
-          {/* Display Category */}
-          <div className="flex items-center">
+        {/* Display Area (Cuisine) only if strArea is present */}
+        {recipe.strArea && (
+          <p className="mb-2 flex items-center text-sm text-gray-600">
             <img
-              src={`/images/${recipe.strCategory?.toLowerCase()}.svg`}
-              alt={recipe.strCategory}
+              src={`/images/${recipe.strArea.toLowerCase()}.svg`}
+              alt={recipe.strArea}
               className="mr-2 h-8 w-8"
             />
-            {recipe.strCategory}
-          </div>
+            {recipe.strArea}
+          </p>
+        )}
+
+        <div className="flex items-center justify-between text-sm text-gray-600">
+          {/* Display Category only if strCategory is present */}
+          {recipe.strCategory && (
+            <div className="flex items-center">
+              <img
+                src={`/images/${recipe.strCategory.toLowerCase()}.svg`}
+                alt={recipe.strCategory}
+                className="mr-2 h-8 w-8"
+              />
+              {recipe.strCategory}
+            </div>
+          )}
         </div>
       </div>
     </div>

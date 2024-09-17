@@ -248,9 +248,9 @@ export default function RecipesByLetterPage() {
         handleClearParameters={handleClearParameters}
       />
       <br></br>
-      
+
       <img className="mx-auto w-40" src="images/recipes.png" alt="Title"></img>
-  
+
       <br></br>
 
       {noRecipesFound && !resultsFound ? (
