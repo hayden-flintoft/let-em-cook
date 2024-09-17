@@ -1,8 +1,11 @@
-import { useState, useEffect } from 'react'
-import { useClerk, useUser } from '@clerk/clerk-react'
-import { Heart } from 'lucide-react'
-import { fetchRecipeById } from '@/api/recipes'
-import { Meal } from 'models/meals'
+
+import { useState, useEffect } from 'react';
+import { useClerk, useUser } from '@clerk/clerk-react';
+import { Heart } from 'lucide-react';
+import { fetchRecipeById } from '@/api/recipes';
+import { Meal } from 'models/meals';
+import { AuroraBackground } from './ui/aurora-background';
+
 
 export default function User() {
   const { user } = useUser()
@@ -44,7 +47,8 @@ export default function User() {
   }
 
   return (
-    <div className="relative mx-auto max-w-4xl overflow-hidden rounded-3xl bg-[#9E3700] shadow-lg">
+    <>
+    <div className="relative max-w-4xl mx-auto bg-[#9E3700] shadow-lg rounded-3xl overflow-hidden">
       <div className="p-6">
         <h1 className="mb-6 text-4xl font-bold text-white">Profile</h1>
         <div className="mb-6 flex items-center">
@@ -82,17 +86,13 @@ export default function User() {
         ) : (
           <div className="grid grid-cols-2 gap-4">
             {likedRecipes.map((recipe) => (
-              <div
-                key={recipe.idMeal}
-                className="cursor-pointer rounded-lg bg-white p-4 shadow-md"
+              <div 
+                key={recipe.idMeal} 
+                className="bg-white p-4 rounded-3xl shadow-md cursor-pointer"
                 onClick={() => handleRecipeClick(recipe.idMeal)}
               >
-                <img
-                  src={recipe.strMealThumb}
-                  alt={recipe.strMeal}
-                  className="h-40 w-full rounded-lg object-cover"
-                />
-                <h3 className="mt-2 text-xl font-semibold">{recipe.strMeal}</h3>
+                <img src={recipe.strMealThumb} alt={recipe.strMeal} className="w-full h-40 object-cover rounded-3xl" />
+                <h3 className="text-xl font-semibold mt-2 text-[#9E3700]">{recipe.strMeal}</h3>
               </div>
             ))}
           </div>
@@ -104,8 +104,8 @@ export default function User() {
       </div>
 
       {selectedRecipeId && (
-        <div className="mt-6 rounded-lg bg-white p-6">
-          <h2 className="mb-4 text-2xl font-bold">Selected Recipe</h2>
+        <div className="p-6 bg-white rounded-3xl mt-6">
+          <h2 className="text-2xl font-bold mb-4">Selected Recipe</h2>
           {isRecipeLoading ? (
             <p>Loading recipe...</p>
           ) : selectedRecipe ? (
@@ -117,13 +117,7 @@ export default function User() {
                 className="my-4 h-60 w-full rounded-lg object-cover"
               />
               <p>{selectedRecipe.description}</p>
-              <h4 className="mt-4 font-semibold">Ingredients:</h4>
-              <ul className="list-disc pl-5">
-                {selectedRecipe.ingredients.map((ingredient, index) => (
-                  <li key={index}>{ingredient}</li>
-                ))}
-              </ul>
-              <h4 className="mt-4 font-semibold">Instructions:</h4>
+
               <ol className="list-decimal pl-5">
                 {selectedRecipe.instructions.map((instruction, index) => (
                   <li key={index}>{instruction}</li>
@@ -136,5 +130,5 @@ export default function User() {
         </div>
       )}
     </div>
-  )
+    </> );
 }
