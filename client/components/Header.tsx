@@ -24,8 +24,8 @@ export default function Header() {
   }
 
   return (
-    <header className="mx-4 mt-4 w-[calc(100%-8px)] rounded-3xl bg-background p-4 text-primary">
-      <div className="container mx-auto flex h-full items-center justify-between">
+    <header className="mx-[10px] mt-[10px] w-[calc(100%-20px)] rounded-3xl bg-slate-50 p-4 text-[#9E3700]">
+      <div className="container mx-auto flex h-full items-end justify-between">
         {/* Logo */}
         <Link to="/">
           <img
@@ -88,13 +88,8 @@ export default function Header() {
                 to="/userprofile"
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white"
               >
-                <img
-                  src="/images/chef (1).png"
-                  alt="Chef Icon"
-                  className="h-8 w-8 rounded-full object-cover"
-                />
-                {/* Display user first initial if available */}
-                {user?.firstName?.[0]}
+                 {user?.firstName?.[0]}
+
               </Link>
             </div>
           )}

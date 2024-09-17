@@ -28,7 +28,7 @@ export default function RecipesList({
             <Link
               key={recipe.idMeal}
               to={`/recipe/${recipe.idMeal}`}
-              className="shadow-neumorph hover:shadow-neumorph-pressed flex flex-col items-center rounded-lg p-4"
+              className="shadow-neumorph hover:shadow-neumorph-pressed flex flex-col items-center rounded-3xl p-4"
 
             >
               <img
