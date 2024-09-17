@@ -21,7 +21,7 @@ export default function Layout() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="container mx-auto flex-grow bg-white p-4">
+      <main className="container mx-auto flex-grow p-4">
         {/* Pass the contextValue via the Outlet */}
         <Outlet context={contextValue} />
       </main>
