@@ -43,9 +43,7 @@ export default function Carousel({
         <div
           key={`${option}-${index}`}
           className={`mx-2 flex min-w-[100px] cursor-pointer flex-col items-center md:mx-4 md:min-w-[150px] ${
-            option === selectedOption
-              ? 'rounded-lg border border-primary ring-2 ring-primary'
-              : ''
+            option === selectedOption ? 'rounded-lg text-[#9E3700]' : ''
           }`}
           onClick={() =>
             onOptionSelect(option, isCuisine(option) ? 'cuisine' : 'category')
@@ -55,7 +53,7 @@ export default function Carousel({
             src={`/images/${option.toLowerCase()}.svg`}
             alt={option}
             className={`mb-2 h-12 w-12 rounded-lg object-cover md:h-16 md:w-16 ${
-              option === selectedOption ? 'ring-2 ring-primary' : ''
+              option === selectedOption ? '' : ''
             }`}
           />
           <span
