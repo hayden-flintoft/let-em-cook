@@ -8,6 +8,7 @@ import categories from './api/categories.ts'
 import ingredients from './api/ingredients.ts'
 import areas from './api/cuisines.ts'
 import comments from './api/comment.ts'
+import likes from './api/likes.ts'
 
 const __filename = URL.fileURLToPath(import.meta.url)
 const __dirname = Path.dirname(__filename)
@@ -22,6 +23,7 @@ server.use('/api/v1/categories', categories)
 server.use('/api/v1/ingredients', ingredients)
 server.use('/api/v1/areas', areas)
 server.use('/api/v1/comments/', comments)
+server.use('/api/v1/likes/', likes)
 
 if (process.env.NODE_ENV === 'production') {
   server.use(express.static(Path.resolve('public')))

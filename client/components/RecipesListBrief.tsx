@@ -15,7 +15,9 @@ export default function RecipesList({
 }: RecipesListProps) {
   return (
     <section>
-      <h3 className="mb-4 mt-8 text-2xl font-semibold">
+      <br></br>
+      <br></br>
+      <h3 className="mb-4 mt-8 text-3xl font-semibold text-[#9E3700]">
         {selectedOption} {isCuisine ? 'Cuisine' : 'Category'} Recipes
       </h3>
       {loading ? (
@@ -26,7 +28,7 @@ export default function RecipesList({
             <Link
               key={recipe.idMeal}
               to={`/recipe/${recipe.idMeal}`} // Navigate to the recipe page
-              className="shadow-neumorph hover:shadow-neumorph-pressed flex flex-col items-center rounded-lg p-4"
+              className="shadow-neumorph hover:shadow-neumorph-pressed flex flex-col items-center rounded-3xl p-4"
             >
               <img
                 src={recipe.strMealThumb}
