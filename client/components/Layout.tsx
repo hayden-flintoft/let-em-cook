@@ -18,7 +18,6 @@ export default function Layout() {
     setSelectedCuisines,
   }
 
-  console.log('import mets', import.meta.env.VITE_CLERK_PUBLISHABLE_KEY)
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
       <Header />
