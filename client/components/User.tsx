@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useClerk, useUser } from '@clerk/clerk-react';
 import { Heart } from 'lucide-react';
@@ -7,73 +6,75 @@ import { Meal } from 'models/meals';
 import { UserButton } from '@clerk/clerk-react';
 
 export default function User() {
-  const { user } = useUser()
-  const { openUserProfile } = useClerk()
-  const [likedRecipes, setLikedRecipes] = useState([] as Meal[])
-  const [isLoading, setIsLoading] = useState(true)
-  const [selectedRecipeId, setSelectedRecipeId] = useState(null)
+  const { user } = useUser();
+  const { openUserProfile } = useClerk();
+  const [likedRecipes, setLikedRecipes] = useState([] as Meal[]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedRecipeId, setSelectedRecipeId] = useState(null);
 
   useEffect(() => {
-    fetchLikedRecipes()
-  }, [user])
+    fetchLikedRecipes();
+  }, [user]);
 
   const fetchLikedRecipes = async () => {
-    if (!user) return
-    setIsLoading(true)
+    if (!user) return;
+    setIsLoading(true);
     try {
-      const response = await fetch(`/api/v1/likes/user/${user.id}`)
-      const data = await response.json()
+      const response = await fetch(`/api/v1/likes/user/${user.id}`);
+      const data = await response.json();
       const promises: Meal[] = data.map(async (recipe) => {
-        const response = await fetchRecipeById(recipe.recipeId)
-        return response
-      })
-      const fullrecipes = await Promise.all(promises)
-      console.log(fullrecipes)
-      setLikedRecipes(fullrecipes)
+        const response = await fetchRecipeById(recipe.recipeId);
+        return response;
+      });
+      const fullrecipes = await Promise.all(promises);
+      console.log(fullrecipes);
+      setLikedRecipes(fullrecipes);
     } catch (error) {
-      console.error('Error fetching liked recipes:', error)
+      console.error('Error fetching liked recipes:', error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleOpenUserProfile = () => {
-    openUserProfile()
-  }
+    openUserProfile();
+  };
 
   const handleRecipeClick = (recipeId) => {
-    setSelectedRecipeId(recipeId)
-  }
+    setSelectedRecipeId(recipeId);
+  };
 
   return (
-    
     <div className="max-w-4xl mx-auto bg-[#9E3700] shadow-lg rounded-3xl overflow-hidden">
       <div className="p-8">
-        <h1 className="mb-8 text-4xl font-bold text-white">Profile</h1>
-        <div className="mb-8 flex items-center">
-      <div className="h-50 w-50">
-        <UserButton 
-          appearance={{
-            elements: {
-              userButtonAvatarBox: "h-full w-full",
-            },
-          }}
-        />
-    </div>
+        <h1 className="mb-6 text-4xl font-bold text-white">Profile</h1>
+        
+        <div className="flex items-center mb-6 space-x-6">
+          <div className="h-20 w-20 rounded-full overflow-hidden border-2 border-white">
+            <UserButton 
+              appearance={{
+                elements: {
+                  userButtonAvatarBox: "h-full w-full",
+                },
+              }}
+            />
+          </div>
+
           <div>
             <h2 className="text-3xl font-semibold text-white mb-1">
               {user?.firstName}
             </h2>
             <p className="text-orange-200 mb-3">{user?.username}</p>
-            <button
-              onClick={handleOpenUserProfile}
-              className="rounded-full bg-white px-6 py-2 text-[#9E3700] transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50"
-            >
-              Settings
-            </button>
           </div>
+          
+          <button
+            onClick={handleOpenUserProfile}
+            className="ml-auto rounded-full bg-white px-6 py-2 text-[#9E3700] transition-colors hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50"
+          >
+            Settings
+          </button>
         </div>
-        <br></br>
+
         <div className="flex justify-center items-center">
           <div className="flex items-center bg-white rounded-full px-8 py-4">
             <Heart className="mr-2 h-6 w-6 text-[#9E3700]" />
