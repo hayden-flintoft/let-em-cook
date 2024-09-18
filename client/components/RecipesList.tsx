@@ -26,7 +26,7 @@ const RecipesList: React.FC<RecipesListProps> = ({
             <RecipeListItem recipe={recipe} layout="card" />
           </div>
         ))}
-        {isFetching && <div>Loading more...</div>}
+        {/* {isFetching && <div>Loading more...</div>} */}
       </div>
     </div>
   )
