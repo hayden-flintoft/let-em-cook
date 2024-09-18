@@ -167,15 +167,23 @@ export default function RecipePage() {
                 {comments.length > 0 ? (
                   comments.map((comment, index) => (
                     <li key={index} className="rounded-lg bg-gray-100 p-2">
-                   <div className="grid grid-cols-[auto,1fr] gap-4 items-center">
-    <Link
-      to="/userprofile"
-      className="flex h-12 w-12 items-center justify-center rounded-full bg-[#9E3700] text-xl font-bold text-white"
-    >
-      {user.firstName?.[0] || <User className="h-6 w-6" />}
-    </Link>
-    <p className="text-left">{comment.comment}</p>
-  </div>
+                      <div className="grid grid-cols-[auto,1fr] items-center gap-4">
+                        <Link
+                          to="/userprofile"
+                          className="flex h-12 w-12 items-center justify-center rounded-full bg-[#9E3700] text-xl font-bold text-white"
+                        >
+                          {/* Use the first letter of the commenter's username */}
+                          {comment.username?.[0]?.toUpperCase() || (
+                            <User className="h-6 w-6" />
+                          )}
+                        </Link>
+                        <p className="text-left">
+                          <strong className="text-[#9E3700]">
+                            {comment.username}:
+                          </strong>{' '}
+                          {comment.comment}
+                        </p>
+                      </div>
                     </li>
                   ))
                 ) : (
