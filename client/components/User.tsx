@@ -1,133 +1,138 @@
-
 import { useState, useEffect } from 'react';
 import { useClerk, useUser } from '@clerk/clerk-react';
 import { Heart } from 'lucide-react';
 import { fetchRecipeById } from '@/api/recipes';
 import { Meal } from 'models/meals';
-
+import { UserButton } from '@clerk/clerk-react';
 
 export default function User() {
-  const { user } = useUser()
-  const { openUserProfile } = useClerk()
-  const [likedRecipes, setLikedRecipes] = useState([] as Meal[])
-  const [isLoading, setIsLoading] = useState(true)
-  const [selectedRecipeId, setSelectedRecipeId] = useState(null)
+  const { user } = useUser();
+  const { openUserProfile } = useClerk();
+  const [likedRecipes, setLikedRecipes] = useState([] as Meal[]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedRecipeId, setSelectedRecipeId] = useState(null);
 
   useEffect(() => {
-    fetchLikedRecipes()
-  }, [user])
+    fetchLikedRecipes();
+  }, [user]);
 
   const fetchLikedRecipes = async () => {
-    if (!user) return
-    setIsLoading(true)
+    if (!user) return;
+    setIsLoading(true);
     try {
-      const response = await fetch(`/api/v1/likes/user/${user.id}`)
-      const data = await response.json()
+      const response = await fetch(`/api/v1/likes/user/${user.id}`);
+      const data = await response.json();
       const promises: Meal[] = data.map(async (recipe) => {
-        const response = await fetchRecipeById(recipe.recipeId)
-        return response
-      })
-      const fullrecipes = await Promise.all(promises)
-      console.log(fullrecipes)
-      setLikedRecipes(fullrecipes)
+        const response = await fetchRecipeById(recipe.recipeId);
+        return response;
+      });
+      const fullrecipes = await Promise.all(promises);
+      console.log(fullrecipes);
+      setLikedRecipes(fullrecipes);
     } catch (error) {
-      console.error('Error fetching liked recipes:', error)
+      console.error('Error fetching liked recipes:', error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleOpenUserProfile = () => {
-    openUserProfile()
-  }
+    openUserProfile();
+  };
 
   const handleRecipeClick = (recipeId) => {
-    setSelectedRecipeId(recipeId)
-  }
+    setSelectedRecipeId(recipeId);
+  };
 
   return (
-    <>
-    <div className="relative max-w-4xl mx-auto bg-[#9E3700] shadow-lg rounded-3xl overflow-hidden">
-      <div className="p-6">
+    <div className="max-w-4xl mx-auto bg-[#9E3700] shadow-lg rounded-3xl overflow-hidden">
+      <div className="p-8">
         <h1 className="mb-6 text-4xl font-bold text-white">Profile</h1>
-        <div className="mb-6 flex items-center">
-          <div className="border-5 mr-4 flex h-24 w-24 items-center justify-center rounded-3xl border-white bg-[#9E3700] text-4xl font-bold text-white">
-            <img src="/images/Untitled design (1).png" alt="Chef Icon" />
+        
+        <div className="flex items-center mb-6 space-x-6">
+          <div className="h-20 w-20 rounded-full overflow-hidden border-2 border-white">
+            <UserButton 
+              appearance={{
+                elements: {
+                  userButtonAvatarBox: "h-full w-full",
+                },
+              }}
+            />
           </div>
+
           <div>
-            <h2 className="text-3xl font-semibold text-white">
+            <h2 className="text-3xl font-semibold text-white mb-1">
               {user?.firstName}
             </h2>
-            <p className="text-white">{user?.username}</p>
-            <button
-              onClick={handleOpenUserProfile}
-              className="mt-2 rounded-full border border-white px-4 py-2 text-white transition-colors hover:bg-green-600 hover:text-white"
-            >
-              Settings
-            </button>
+            <p className="text-orange-200 mb-3">{user?.username}</p>
           </div>
-        </div>
-        <div className="mb-4 flex">
-          <button className="text-white">
-            <span className="flex items-center">
-              <Heart className="mr-2 h-6 w-6" />
-              Likes
-            </span>
+          
+          <button
+            onClick={handleOpenUserProfile}
+            className="ml-auto rounded-full bg-white px-6 py-2 text-[#9E3700] transition-colors hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50"
+          >
+            Settings
           </button>
+        </div>
+
+        <div className="flex justify-center items-center">
+          <div className="flex items-center bg-white rounded-full px-8 py-4">
+            <Heart className="mr-2 h-6 w-6 text-[#9E3700]" />
+            <span className="text-md font-bold text-[#9E3700]">Liked recipes</span>
+          </div>
         </div>
       </div>
 
-      <div className="relative z-10 w-full border-b border-white"></div>
-
-      <div className="relative z-10 p-6">
+      <div className="bg-[#9E3700] p-8">
         {isLoading ? (
           <p className="text-white">Loading liked recipes...</p>
         ) : (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-6">
             {likedRecipes.map((recipe) => (
               <div 
                 key={recipe.idMeal} 
-                className="bg-white p-4 rounded-3xl shadow-md cursor-pointer"
+                className="bg-white rounded-2xl shadow-md overflow-hidden cursor-pointer transition-transform hover:scale-105"
                 onClick={() => handleRecipeClick(recipe.idMeal)}
               >
-                <img src={recipe.strMealThumb} alt={recipe.strMeal} className="w-full h-40 object-cover rounded-3xl" />
-                <h3 className="text-xl font-semibold mt-2 text-[#9E3700]">{recipe.strMeal}</h3>
+                <img src={recipe.strMealThumb} alt={recipe.strMeal} className="w-full h-48 object-cover" />
+                <h3 className="text-xl font-semibold p-4 text-orange-900">{recipe.strMeal}</h3>
               </div>
             ))}
           </div>
         )}
 
         {!isLoading && likedRecipes.length === 0 && (
-          <p className="text-white">You havent liked any recipes yet.</p>
+          <p className="text-white text-center py-8">You haven't liked any recipes yet.</p>
         )}
       </div>
 
       {selectedRecipeId && (
-        <div className="p-6 bg-white rounded-3xl mt-6">
-          <h2 className="text-2xl font-bold mb-4">Selected Recipe</h2>
+        <div className="p-8 bg-white">
+          <h2 className="text-3xl font-bold mb-6 text-[#9E3700]">Selected Recipe</h2>
           {isRecipeLoading ? (
-            <p>Loading recipe...</p>
+            <p className="text-orange-900">Loading recipe...</p>
           ) : selectedRecipe ? (
             <div>
-              <h3 className="text-xl font-semibold">{selectedRecipe.name}</h3>
+              <h3 className="text-2xl font-semibold mb-4 text-orange-800">{selectedRecipe.name}</h3>
               <img
                 src={selectedRecipe.image}
                 alt={selectedRecipe.name}
-                className="my-4 h-60 w-full rounded-lg object-cover"
+                className="w-full h-72 object-cover rounded-xl mb-6"
               />
-              <p>{selectedRecipe.description}</p>
+              <p className="text-gray-700 mb-6">{selectedRecipe.description}</p>
 
-              <ol className="list-decimal pl-5">
+              <h4 className="text-xl font-semibold mb-4 text-orange-800">Instructions</h4>
+              <ol className="list-decimal pl-6 space-y-2">
                 {selectedRecipe.instructions.map((instruction, index) => (
-                  <li key={index}>{instruction}</li>
+                  <li key={index} className="text-gray-700">{instruction}</li>
                 ))}
               </ol>
             </div>
           ) : (
-            <p>Recipe not found</p>
+            <p className="text-orange-900">Recipe not found</p>
           )}
         </div>
       )}
     </div>
-    </> );
+  );
 }
