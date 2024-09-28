@@ -13,9 +13,6 @@ module.exports = {
     container: {
       center: true,
       padding: '2rem',
-      screens: {
-        '2xl': '1400px',
-      },
     },
     extend: {
       colors: {
@@ -94,28 +91,32 @@ module.exports = {
       },
     },
   },
-  // plugins: [require('tailwindcss-animate'), addVariablesForColors],
+  plugins: [
+    require('tailwindcss-animate'),
+    '@tailwindcss/aspect-ratio',
+    addVariablesForColors,
+  ],
   // plugins: [require('tailwindcss-animate')],
 }
 
 // This plugin adds each Tailwind color as a global CSS variable, e.g., var(--gray-200).
-// function addVariablesForColors({ addBase, theme }) {
-//   const colors = theme('colors')
-//   const newVars = {}
+function addVariablesForColors({ addBase, theme }) {
+  const colors = theme('colors')
+  const newVars = {}
 
-//   function extractColors(colorObj, prefix = '') {
-//     Object.entries(colorObj).forEach(([key, value]) => {
-//       if (typeof value === 'string') {
-//         newVars[`--${prefix}${key}`] = value
-//       } else if (typeof value === 'object') {
-//         extractColors(value, `${prefix}${key}-`)
-//       }
-//     })
-//   }
+  function extractColors(colorObj, prefix = '') {
+    Object.entries(colorObj).forEach(([key, value]) => {
+      if (typeof value === 'string') {
+        newVars[`--${prefix}${key}`] = value
+      } else if (typeof value === 'object') {
+        extractColors(value, `${prefix}${key}-`)
+      }
+    })
+  }
 
-//   extractColors(colors)
+  extractColors(colors)
 
-//   addBase({
-//     ':root': newVars,
-//   })
-// }
+  addBase({
+    ':root': newVars,
+  })
+}

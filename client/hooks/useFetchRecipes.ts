@@ -1,3 +1,4 @@
+// client/hooks/useFetchRecipes.ts
 import { useState, useEffect } from 'react'
 
 export const useFetchRecipes = (selectedOption: string, isCuisine: boolean) => {

@@ -1,10 +1,10 @@
 // client/components/Home.tsx
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { carouselCategories, carouselCuisines } from '../../models/carouselData'
-import { useFetchRecipes } from '@/hooks/useFetchRecipes'
 import Carousel from './Carousel'
 import RecipesList from './RecipesList'
+import { DataContext } from '../context/DataContext'
 
 export default function Home() {
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
@@ -12,6 +12,14 @@ export default function Home() {
   const navigate = useNavigate()
 
   const allOptions = [...carouselCuisines, ...carouselCategories]
+
+  // Access recipes from context
+  const dataContext = useContext(DataContext)
+  if (!dataContext) {
+    throw new Error('Home must be used within a DataProvider')
+  }
+
+  const { recipes, setRecipes } = dataContext
 
   // Select a random option when the page loads
   useEffect(() => {
@@ -23,8 +31,27 @@ export default function Home() {
     setIsCuisine(isSelectedCuisine)
   }, [])
 
-  // Use the custom hook to fetch recipes based on the selected option
-  const { recipes, loading } = useFetchRecipes(selectedOption || '', isCuisine)
+  // Fetch recipes based on selected option
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      if (!selectedOption) return
+
+      try {
+        const apiUrl = isCuisine
+          ? `https://www.themealdb.com/api/json/v1/1/filter.php?a=${selectedOption}` // Cuisine API
+          : `https://www.themealdb.com/api/json/v1/1/filter.php?c=${selectedOption}` // Category API
+
+        const response = await fetch(apiUrl)
+        const data = await response.json()
+        setRecipes(data.meals || [])
+      } catch (error) {
+        console.error('Error fetching recipes:', error)
+        setRecipes([])
+      }
+    }
+
+    fetchRecipes()
+  }, [selectedOption, isCuisine, setRecipes])
 
   const handleOptionSelect = (option: string, type: 'category' | 'cuisine') => {
     setSelectedOption(option)
@@ -90,8 +117,9 @@ export default function Home() {
         </h3>
         {selectedOption && (
           <RecipesList
-            recipes={recipes} // Ensure recipes contains strArea and strCategory
-            isFetching={loading}
+            recipes={recipes} // Comes from context
+            isFetching={false} // Home doesn't handle fetching state
+            // lastRecipeElementRef is optional
           />
         )}
       </section>

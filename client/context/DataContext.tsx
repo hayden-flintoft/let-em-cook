@@ -1,24 +1,15 @@
-import { MealListItem } from 'models/meals'
-import React, { createContext, useState } from 'react'
+// client/context/DataContext.tsx
+import { createContext } from 'react'
 
-interface DataContextProps {
-  recipes: MealListItem[]
-  setRecipes: React.Dispatch<React.SetStateAction<MealListItem[]>>
-  // Add other shared state variables as needed
+interface DataContextType {
+  selectedIngredients: string[]
+  setSelectedIngredients: React.Dispatch<React.SetStateAction<string[]>>
+  selectedCategories: string[]
+  setSelectedCategories: React.Dispatch<React.SetStateAction<string[]>>
+  selectedCuisines: string[]
+  setSelectedCuisines: React.Dispatch<React.SetStateAction<string[]>>
+  recipes: any[] // Added recipes
+  setRecipes: React.Dispatch<React.SetStateAction<any[]>> // Added setRecipes
 }
 
-export const DataContext = createContext<DataContextProps | undefined>(
-  undefined,
-)
-
-export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
-  const [recipes, setRecipes] = useState<MealListItem[]>([])
-
-  return (
-    <DataContext.Provider value={{ recipes, setRecipes }}>
-      {children}
-    </DataContext.Provider>
-  )
-}
+export const DataContext = createContext<DataContextType | null>(null)

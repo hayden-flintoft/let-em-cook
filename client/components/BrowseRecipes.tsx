@@ -1,5 +1,6 @@
+// client/components/BrowseRecipes.tsx
 import { useState, useEffect, useRef, useCallback, useContext } from 'react'
-import { useLocation } from 'react-router-dom' // Import to get the search query
+import { useLocation } from 'react-router-dom'
 import SearchHeader from '@/components/SearchHeader'
 import { getCuisines } from '@/api/cuisines'
 import { getCategories } from '@/api/categories'
@@ -8,14 +9,14 @@ import { MealListItem } from '../../models/meals'
 import { Ingredient } from '../../models/ingredients'
 import { childIngredientsMap } from '../../models/mapping'
 import LoadingSpinner from '@/components/ui/loadingspinner'
-import ScrollToTopFAB from '@/components/ScrollToTopFAB' // Import the ScrollToTopFAB
-import RecipesList from '@/components/RecipesList' // Import the new RecipesList
-import FiltersDebugInfo from '@/components/FiltersDebugInfo' // Import the new FiltersDebugInfo
+import ScrollToTopFAB from '@/components/ScrollToTopFAB'
+import RecipesList from '@/components/RecipesList'
+import FiltersDebugInfo from '@/components/FiltersDebugInfo'
 import { DataContext } from '../context/DataContext'
 
 const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
 
-export default function RecipesByLetterPage() {
+export default function BrowseRecipes() {
   const dataContext = useContext(DataContext)
   const [recipes, setRecipes] = useState<MealListItem[]>([])
   const [filteredRecipes, setFilteredRecipes] = useState<MealListItem[]>([])
@@ -23,7 +24,7 @@ export default function RecipesByLetterPage() {
   const [isFetching, setIsFetching] = useState(false)
   const [hasMoreLetters, setHasMoreLetters] = useState(true)
   const [noRecipesFound, setNoRecipesFound] = useState(false)
-  const [resultsFound, setResultsFound] = useState(false) // Track if any results are found
+  const [resultsFound, setResultsFound] = useState(false)
   const {
     data: ingredients,
     isLoading: ingredientsLoading,
@@ -38,14 +39,14 @@ export default function RecipesByLetterPage() {
   const [categories, setCategories] = useState([])
 
   const observer = useRef<IntersectionObserver | null>(null)
-  const location = useLocation() // Access the current URL location
-  const searchQuery = new URLSearchParams(location.search).get('query') // Extract the search query
+  const location = useLocation()
+  const searchQuery = new URLSearchParams(location.search).get('query')
 
   if (!dataContext) {
     throw new Error('BrowseRecipes must be used within a DataProvider')
   }
 
-  const { recipes, setRecipes } = dataContext
+  const { recipes: contextRecipes, setRecipes: setContextRecipes } = dataContext
 
   const lastRecipeElementRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -74,16 +75,14 @@ export default function RecipesByLetterPage() {
       const fetchedRecipes = data.meals || []
 
       if (fetchedRecipes.length > 0) {
-        setRecipes((prevRecipes) => [...prevRecipes, ...fetchedRecipes])
+        setContextRecipes((prevRecipes) => [...prevRecipes, ...fetchedRecipes])
         setNoRecipesFound(false)
-        setResultsFound(true) // Mark results found
+        setResultsFound(true)
       } else if (currentLetterIndex < alphabet.length - 1) {
-        // Move to the next letter if no recipes for the current letter
         setCurrentLetterIndex((prevIndex) => prevIndex + 1)
       } else {
-        // If no results found and we've reached the end of the alphabet
         if (!resultsFound) {
-          setNoRecipesFound(true) // Only set to true if no results found across all letters
+          setNoRecipesFound(true)
         }
       }
     } catch (error) {
@@ -163,7 +162,7 @@ export default function RecipesByLetterPage() {
 
   // Apply filtering whenever filters or search query change
   useEffect(() => {
-    let filtered = [...recipes]
+    let filtered = [...contextRecipes]
 
     // Apply category filter if selected
     if (selectedCategories.length > 0) {
@@ -203,7 +202,6 @@ export default function RecipesByLetterPage() {
       )
     }
 
-    setRecipes((prevRecipes) => [...prevRecipes, ...fetchedRecipes])
     setFilteredRecipes(filtered)
 
     // If no recipes after filtering, continue fetching the next letter
@@ -211,24 +209,25 @@ export default function RecipesByLetterPage() {
       setCurrentLetterIndex((prevIndex) => prevIndex + 1)
     }
   }, [
-    recipes,
+    contextRecipes,
     selectedIngredients,
     selectedCategories,
     selectedCuisines,
     searchQuery,
+    currentLetterIndex,
   ])
 
-  const handleIngredientChange = (selectedOptions: Ingredient[]) => {
+  const handleIngredientChange = (selectedOptions: any[]) => {
     const selectedValues = selectedOptions.map((option) => option.value)
     const expandedValues = expandIngredients(selectedValues)
     setSelectedIngredients(expandedValues)
   }
 
-  const handleCategoryChange = (selectedOption: CategoryOption | null) => {
+  const handleCategoryChange = (selectedOption: any) => {
     setSelectedCategories(selectedOption ? [selectedOption.value] : [])
   }
 
-  const handleCuisineChange = (selectedOption: CuisineOption | null) => {
+  const handleCuisineChange = (selectedOption: any) => {
     setSelectedCuisines(selectedOption ? [selectedOption.value] : [])
   }
 
@@ -256,11 +255,11 @@ export default function RecipesByLetterPage() {
         handleCategoryChange={handleCategoryChange}
         handleClearParameters={handleClearParameters}
       />
-      <br></br>
+      <br />
 
-      <img className="mx-auto w-40" src="/images/recipes.png" alt="Title"></img>
+      <img className="mx-auto w-40" src="/images/recipes.png" alt="Title" />
 
-      <br></br>
+      <br />
 
       {noRecipesFound && !resultsFound ? (
         <div className="text-center text-xl text-[#9E3700]">
@@ -269,8 +268,8 @@ export default function RecipesByLetterPage() {
       ) : (
         <RecipesList
           recipes={filteredRecipes}
-          lastRecipeElementRef={lastRecipeElementRef}
           isFetching={isFetching}
+          lastRecipeElementRef={lastRecipeElementRef}
         />
       )}
 
