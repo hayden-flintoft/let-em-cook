@@ -1,4 +1,4 @@
-// client/components/RecipesByLetterPage.tsx
+// client/components/BrowseRecipes.tsx
 import { useState, useEffect, useRef, useCallback, useContext } from 'react'
 import { useLocation } from 'react-router-dom'
 import SearchHeader from '@/components/SearchHeader'
@@ -11,12 +11,14 @@ import { childIngredientsMap } from '../../models/mapping'
 import LoadingSpinner from '@/components/ui/loadingspinner'
 import ScrollToTopFAB from '@/components/ScrollToTopFAB'
 import RecipesList from '@/components/RecipesList'
+import FiltersDebugInfo from '@/components/FiltersDebugInfo'
 import { DataContext } from '../context/DataContext'
 
 const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
 
-export default function RecipesByLetterPage() {
+export default function BrowseRecipes() {
   const dataContext = useContext(DataContext)
+  const [recipes, setRecipes] = useState<MealListItem[]>([])
   const [filteredRecipes, setFilteredRecipes] = useState<MealListItem[]>([])
   const [currentLetterIndex, setCurrentLetterIndex] = useState(0)
   const [isFetching, setIsFetching] = useState(false)
@@ -41,7 +43,7 @@ export default function RecipesByLetterPage() {
   const searchQuery = new URLSearchParams(location.search).get('query')
 
   if (!dataContext) {
-    throw new Error('RecipesByLetterPage must be used within a DataProvider')
+    throw new Error('BrowseRecipes must be used within a DataProvider')
   }
 
   const { recipes: contextRecipes, setRecipes: setContextRecipes } = dataContext

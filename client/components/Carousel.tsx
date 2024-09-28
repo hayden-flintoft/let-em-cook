@@ -1,3 +1,4 @@
+// client/components/Carousel.tsx
 import { useEffect, useRef } from 'react'
 import RandomRecipeButton from './RandomRecipeButton'
 
@@ -21,7 +22,7 @@ export default function Carousel({
   useEffect(() => {
     const scrollInterval = setInterval(() => {
       if (carouselRef.current) {
-        const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current
+        const { scrollLeft, scrollWidth } = carouselRef.current
 
         // Increment the scroll position
         carouselRef.current.scrollLeft += 1
@@ -45,7 +46,7 @@ export default function Carousel({
       {[...options, ...options].map((option, index) => (
         <div
           key={`${option}-${index}`}
-          className={`mx-2 flex min-w-[100px] cursor-pointer flex-col items-center md:mx-4 md:min-w-[150px] ${
+          className={`mx-2 flex min-w-[80px] cursor-pointer flex-col items-center sm:min-w-[100px] md:mx-4 md:min-w-[150px] ${
             option === selectedOption ? 'rounded-lg text-[#9E3700]' : ''
           }`}
           onClick={() =>
@@ -55,12 +56,12 @@ export default function Carousel({
           <img
             src={`/images/${option.toLowerCase()}.svg`}
             alt={option}
-            className={`mb-2 h-12 w-12 rounded-lg object-cover md:h-16 md:w-16 ${
+            className={`mb-2 h-10 w-10 rounded-lg object-cover sm:h-12 sm:w-12 md:h-16 md:w-16 ${
               option === selectedOption ? '' : ''
             }`}
           />
           <span
-            className={`text-sm md:text-base ${
+            className={`text-xs sm:text-sm md:text-base ${
               option === selectedOption
                 ? 'font-bold text-primary'
                 : 'text-muted'
