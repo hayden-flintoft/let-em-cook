@@ -1,3 +1,4 @@
+// client/components/Home.tsx
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { carouselCategories, carouselCuisines } from '../../models/carouselData'
@@ -45,17 +46,17 @@ export default function Home() {
   }
 
   return (
-    <div className="container mx-auto p-8">
+    <div className="container mx-auto p-4 sm:p-8">
       {/* Carousel Section */}
-      <div className="shadow-neumorph hover:shadow-neumorph-pressed relative mb-8 h-[250px] w-full overflow-hidden rounded-3xl md:h-[400px] lg:h-[500px]">
+      <div className="relative mb-8 h-[200px] w-full overflow-hidden rounded-3xl sm:h-[250px] md:h-[400px] lg:h-[500px]">
         <img
           src="/images/Meals-by-Chefkraft.png"
           alt="Various delicious meals"
           className="h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent">
-          <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8 lg:p-12">
-            <h2 className="text-xl font-bold text-white md:text-4xl lg:text-6xl">
+          <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 lg:p-12">
+            <h2 className="text-base font-bold text-white sm:text-xl md:text-3xl lg:text-5xl">
               &apos;I have nothing to eat&apos;,
               <br />
               <span className="text-accent">is just an unwritten recipe</span>
@@ -65,11 +66,11 @@ export default function Home() {
       </div>
 
       {/* Carousel Component */}
-      <section className="">
+      <section>
         <img
-          className="mx-auto mb-10 mt-20"
+          className="mx-auto mb-10 mt-10 w-3/4 sm:w-1/2"
           src="/images/categories-cuisines.png"
-          alt="Title"
+          alt="Categories and Cuisines"
         />
         <div className="mb-5">
           <Carousel
@@ -84,7 +85,7 @@ export default function Home() {
 
       <section>
         {/* Recipes List Component */}
-        <h3 className="mb-10 mt-20 text-center text-3xl font-bold text-[#9E3700]">
+        <h3 className="mb-10 mt-20 text-center text-2xl font-bold text-[#9E3700] sm:text-3xl">
           {selectedOption} {isCuisine ? 'Cuisine' : 'Category'} Recipes
         </h3>
         {selectedOption && (

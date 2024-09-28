@@ -1,3 +1,4 @@
+// client/components/SearchHeader.tsx
 import React from 'react'
 import Select, { components } from 'react-select'
 
@@ -61,33 +62,23 @@ const SearchHeader: React.FC<SearchHeaderProps> = ({
   }
 
   return (
-    <div
-      className="relative w-full overflow-hidden"
-      style={{ height: '400px' }}
-    >
+    <div className="relative h-64 w-full overflow-hidden sm:h-80 md:h-96 lg:h-[30rem]">
       <img
         src="/images/toys1.png"
         alt="Various delicious meals"
-        className="absolute inset-0 h-full w-full object-cover rounded-3xl"
+        className="absolute inset-0 h-full w-full rounded-3xl object-cover"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/95 to-transparent">
-        <div className="container relative z-10 mx-auto p-8">
-          <br></br>
-          <br></br>
-          <br></br>
-          <br></br>
-          <br></br>
-          <br></br>
-          <br></br>
-          <br></br>
-          {/* <h2 className="mb-8 text-center text-5xl font-bold text-white drop-shadow-lg">
-            Filter for recipe!
+        <div className="container relative z-10 mx-auto p-4 sm:p-8">
+          {/* Optional Heading */}
+          {/* <h2 className="mb-8 text-center text-2xl font-bold text-white sm:text-3xl md:text-4xl">
+            Filter for a Recipe!
           </h2> */}
 
-          <div className="mb-4 flex flex-wrap justify-center space-x-4">
+          <div className="mb-4 flex flex-col items-center space-y-4 sm:flex-row sm:justify-center sm:space-x-4 sm:space-y-0">
             {/* Ingredients Selection with Search, Multi-select & Images */}
-            <div>
-              <h3 className="mb-2 text-xl font-bold text-white">
+            <div className="w-full sm:w-auto">
+              <h3 className="mb-2 text-center text-xl font-bold text-white sm:text-left">
                 Select Ingredients
               </h3>
               <Select
@@ -97,7 +88,7 @@ const SearchHeader: React.FC<SearchHeaderProps> = ({
                 isMulti
                 isSearchable
                 placeholder="Search ingredients..."
-                className="w-64 text-black"
+                className="w-full text-black sm:w-64"
                 components={{ Option }}
                 value={ingredientOptions.filter((option) =>
                   selectedIngredients.includes(option.value),
@@ -108,8 +99,8 @@ const SearchHeader: React.FC<SearchHeaderProps> = ({
             </div>
 
             {/* Cuisine Selection */}
-            <div>
-              <h3 className="mb-2 text-xl font-bold text-white">
+            <div className="w-full sm:w-auto">
+              <h3 className="mb-2 text-center text-xl font-bold text-white sm:text-left">
                 Select Cuisine
               </h3>
               <Select
@@ -117,7 +108,7 @@ const SearchHeader: React.FC<SearchHeaderProps> = ({
                 onChange={handleCuisineChange}
                 isClearable
                 placeholder="Select Cuisine..."
-                className="w-64 text-black"
+                className="w-full text-black sm:w-64"
                 value={
                   selectedCuisines.length > 0
                     ? cuisines.find(
@@ -131,8 +122,8 @@ const SearchHeader: React.FC<SearchHeaderProps> = ({
             </div>
 
             {/* Category Selection */}
-            <div>
-              <h3 className="mb-2 text-xl font-bold text-white">
+            <div className="w-full sm:w-auto">
+              <h3 className="mb-2 text-center text-xl font-bold text-white sm:text-left">
                 Select Category
               </h3>
               <Select
@@ -140,7 +131,7 @@ const SearchHeader: React.FC<SearchHeaderProps> = ({
                 onChange={handleCategoryChange}
                 isClearable
                 placeholder="Select Category..."
-                className="w-64 text-black"
+                className="w-full text-black sm:w-64"
                 value={
                   selectedCategories.length > 0
                     ? categories.find(

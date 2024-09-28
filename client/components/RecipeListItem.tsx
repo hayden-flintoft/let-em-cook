@@ -1,3 +1,4 @@
+// client/components/RecipeListItem.tsx
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -33,11 +34,11 @@ const RecipeListItem: React.FC<RecipeListItemProps> = ({
       className="w-full cursor-pointer overflow-hidden rounded-3xl bg-white shadow-md transition-all hover:shadow-lg"
       onClick={handleClick}
     >
-      <div className="relative">
+      <div className="relative aspect-square">
         <img
           src={recipe.strMealThumb}
           alt={recipe.strMeal}
-          className="h-48 w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover"
         />
       </div>
       <div className="p-4">
