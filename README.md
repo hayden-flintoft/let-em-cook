@@ -1,147 +1,71 @@
-# DevAcademy Boilerplate with Shadcn UI:
+# ![Let 'em Cook](https://let-em-cook.pushed.nz/images/Letemcook.png)
 
-## About DevAcademy Boilerplate: React with Express, Vite
+Let 'em Cook is a recipe discovery platform that allows users to explore recipes by searching for ingredients, cuisines, and categories. This project is built with React and TypeScript and integrates multiple APIs to provide a unique search experience.
 
-This is a starter project that uses Vite to bundle a React app and Express to serve it in production. Express is used in development to serve an API server.
+## Features
 
-Vite React App: [http://localhost:5173](http://localhost:5173)
-Express API Server: [http://localhost:3000](http://localhost:3000)
+- **Ingredient-based Search**: Discover recipes by selecting specific ingredients.
+- **Cuisine and Category Filters**: Narrow down recipe results based on cuisine type and category.
+- **Multi-select & Clear Filters**: Choose multiple ingredients and clear filters with ease.
+- **Lazy Loading and Infinite Scroll**: Browse through large lists of recipes with infinite scrolling and lazy-loaded images.
 
-Requests to `http://localhost:5173/api` are proxied to `http://localhost:3000/api`.
+## Tech Stack
 
-## About Shadcn UI
+- **Frontend**: React, TypeScript, Tailwind CSS
+- **State Management**: React Query
+- **Backend**: Express.js
+- **API Integration**: The MealDB API, Custom Ingredient/Cuisine API
+- **Styling**: Tailwind CSS, and custom components with React Select
+- **Deployment**: Vercel / Pushed NZ
 
-> Shadcn UI is a set of [beautifully designed components](https://ui.shadcn.com/) that you can copy and paste into your apps. 
-> Accessible. Customizable. Open Source.
+## Usage
 
-Shadcn is not a UI component library, instead it allows you build your own component library. Each ui element is ready to go with sensible defaults, but because you own the code, you can tailor each component specifically for your app.
+- **Explore Recipes**: Select ingredients, cuisine, and category from the search filters.
+- **View Recipe Details**: Click on any recipe to see detailed instructions and ingredients.
+- **Bookmark Recipes**: Sign in to bookmark your favourite recipes.
 
-### How to Add UI Components
+## API Reference
 
-Browse the [UI components](https://ui.shadcn.com/docs/components/). To use each UI component there are typically three steps:
+The project integrates with The MealDB API to fetch recipe data. You can explore their [API documentation here](https://www.themealdb.com/api.php).
 
-1. Run the CLI install command (installs into `components/ui`).
-2. Copy/paste the import into your react component.
-3. Copy/paste ui elements into your react component.
+## Live Demo
 
-## Setup
+Check out the live demo of Let 'em Cook [here](https://let-em-cook.pushed.nz/).
 
-### Installation
+## Our Story
 
-To use, consider these steps:
+We believe that creativity in the kitchen does not need to come with a long grocery list.
 
-- Fork this repo
-- Rename your repo according to the app you're building
+Born from the idea that you can make the most of what you already have, our app helps you transform a few ingredients into a meal. We understand that not everyone has the time or energy to shop for complex recipes or follow long ingredient lists. With Let 'em Cook, we want to make cooking simple, fun, and accessible for everyone, no matter your skill level.
 
-```sh
-git clone https://github.com/[your-account]/[your-app].git
-cd [your-app] && npm i
-```
+### How it Works
 
-To start the development server with a watcher that rebuilds your code, run `npm run dev`.
+- Filter ingredients you have, and we'll provide creative meal ideas.
+- Save recipes to your profile by liking or reacting.
+- Intuitive app design for a seamless experience.
 
-Additional components should be placed in `client/components`.
+### Our Mission
 
-### Pre-Installed modules
+Our mission is to inspire you to use what you have and reduce food waste, all while still enjoying flavorful, home-cooked meals. Whether you're a busy professional, a student, or someone looking to save money by using up ingredients before they spoil, Let 'em Cook is here to help you make the most out of every ingredient.
 
-- Vite
-- Vitest
-- Express
-- Tanstack Query (aka React Query)
-- Prettier
-- Supertest
-- Tailwind
-- Shadcn UI
-- Superagent
-- Knex
-- SQLite3
+## Team
 
-### Recommended modules
-
-| Purpose          | Module           | Installation |
-|------------------|------------------|--------------|
-| Front end router | React Router Dom | `npm install react-router-dom` |
-| Env file         | Dotenv           | `npm install dotenv --save` |
-
-## Setting up the database
-
-### 1. The first migration
-
-- Use `npm run knex migrate:make todos` to create a migration file
-- Convert the migration to an ESM module
-  <details style="padding-left: 2em">
-    <summary>How to convert your migration to a module</summary>
-
-    To convert our migration functions we just replace this..
-
-    ```js
-    exports.up = function (knex) { 
-    ```
-
-    ... with
-
-    ```js
-    export function up(knex) {
-    ```
-
-    and replace ...
-
-    ```js
-    exports.down = function (knex) { 
-    ```
-
-    ... with
-
-    ```js
-    export function down(knex) {
-    ```
-
-  </details>
-	
-
-- Edit the new file in the new `migrations` folder so it will add (and drop) a table called `todos`
-  <details style="padding-left: 2em">
-    <summary>More about the <code>todos</code> table</summary>
-
-  It should have the following fields:
-  _ `id` (auto incrementing)
-  _ `task`: string
-
-  The documentation for [`dropTable`](https://knexjs.org/guide/schema-builder.html#droptable) might be helpful.
-  </details>
-
-- Use `npm run knex migrate:latest` to apply the changes to the database
-
-### 2. Seeds
-
-- Use `npm run knex seed:make test-tasks` to create a seed file
-- Edit the new file in the new `seeds` folder so it will add new tasks to the `todos` table
-  <details style="padding-left: 2em">
-    <summary>Tip</summary>
-  First, we need to convert it to an ESM module by changing from this:
-
-  ```js
-  exports.seed = async function (knex) {
-  ```
-
-  to this...
-
-  ```js
-  export async function seed(knex) {
-  ```
-
-  The documentation for [`del`](https://knexjs.org/guide/query-builder.html#del-delete) and [`insert`](https://knexjs.org/guide/query-builder.html#insert) might be helpful.
-  </details>
-
-- Run `npm run knex seed:run` to add the new data to the database
-
-### 3. Viewing data in the database
-
-- Choose and set up a way to view the contents of the database
-<details style="padding-left: 2em">
-  <summary>More about viewing data</summary>
+- **Edward Soung**: Product Owner, Frontend Engineer  
+  - [GitHub](https://github.com/EddieWeddie11)  
+  - [LinkedIn](https://www.linkedin.com/in/eddie-soung-/)
   
-  There are a number of different options for peeking into your SQLite database. We recommend you use the SQLite Viewer VS Code extension. Alternatively, you can install a desktop application, such as the [DB Browser for SQLite](https://sqlitebrowser.org/) (installed on the campus computers) or [DBeaver](https://dbeaver.io) (great for all of the common relational databases - not just SQLite). Or you can use an online tool such as this [SQLite Viewer](https://inloop.github.io/sqlite-viewer/).
-</details>
+- **Hayden Flintoft**: Product Owner, Backend Engineer  
+  - [GitHub](https://github.com/hayden-flintoft)  
+  - [LinkedIn](https://www.linkedin.com/in/hflintoft/)
+  
+- **Edward Rainger**: Frontend Engineer  
+  - [GitHub](https://github.com/edward-rainger)  
+  - [LinkedIn](https://www.linkedin.com/in/edward-rainger-131742279/)
+
+- **Karl Bloomfield**: Backend Engineer, Graphic Designer  
+  - [GitHub](https://github.com/karl-bloomfield)  
+  - [LinkedIn](https://www.linkedin.com/in/karl-bloomfield/)
 
 ---
+
+**Let 'em Cook** © 2024 All rights reserved.
